@@ -1,6 +1,8 @@
 // Importación de componentes necesarios de react-bootstrap y react-icons
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { FaShoppingCart, FaUser } from 'react-icons/fa';
+// Importando el Logo de la app
+import Logo from '../assets/logo.png';
 
 // Definición del componente funcional Header
 const Header = () => {
@@ -13,7 +15,10 @@ const Header = () => {
                 {/* Contenedor de react-bootstrap para alinear y organizar el contenido de la Navbar */}
                 <Container>
                     {/* Marca de la Navbar, funciona como un enlace a la página de inicio */}
-                    <Navbar.Brand href='/'>ProShop</Navbar.Brand>
+                    <Navbar.Brand href='/'>
+                        <img src={Logo} alt="ProShop" />
+                        ProShop
+                    </Navbar.Brand>
                     {/* Botón de alternar para pantallas pequeñas, controla la visibilidad de los elementos de la Navbar */}
                     <Navbar.Toggle aria-controls='basic-navbar-nav' />
                     {/* Elementos colapsables de la Navbar, se muestran en pantallas grandes y se ocultan en pantallas pequeñas */}
