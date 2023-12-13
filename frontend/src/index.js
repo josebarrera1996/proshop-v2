@@ -1,19 +1,42 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-import './assets/styles/bootstrap.custom.css';
-import './assets/styles/index.css';
-import App from './App';
+import React from 'react'; // Biblioteca fundamental de React
+import ReactDOM from 'react-dom/client'; // Para renderizar React en el DOM
+import {
+  createBrowserRouter, // Crea un enrutador de rutas
+  createRoutesFromElements, // Crea rutas a partir de elementos React
+  Route, // Define una ruta con un componente asociado
+  RouterProvider, // Proporciona el enrutador al resto de la aplicación
+} from 'react-router-dom'; // Librería para manejo de rutas en React
 import reportWebVitals from './reportWebVitals';
 
+// Importamos archivos de estilos:
+import './assets/styles/bootstrap.custom.css'; // Estilos personalizados de Bootstrap
+import './assets/styles/index.css'; // Estilos base de la aplicación
+
+// Importamos el componente principal y la pantalla de inicio:
+import App from './App'; // Componente principal de la aplicación
+import HomeScreen from './screens/HomeScreen'; // Pantalla inicial de la aplicación
+
+// Creamos un enrutador con rutas a partir de elementos React:
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    // Ruta raíz "/", renderiza el componente App:
+    <Route path="/" element={<App />}>
+      {/* Ruta anidada para "/", renderiza la pantalla de inicio: */}
+      <Route index={true} path="/" element={<HomeScreen />} />
+    </Route>
+  )
+);
+
+// Creamos un nodo raíz para renderizar la aplicación:
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+// Renderizamos la aplicación en modo estricto (para detectar errores):
 root.render(
   <React.StrictMode>
-    <App />
+    {/* Proporcionamos el enrutador a la aplicación: */}
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+// Reportamos métricas de rendimiento (opcional):
 reportWebVitals();
