@@ -15,6 +15,7 @@ import './assets/styles/index.css'; // Estilos base de la aplicación
 // Importamos el componente principal y la pantalla de inicio:
 import App from './App'; // Componente principal de la aplicación
 import HomeScreen from './screens/HomeScreen'; // Pantalla inicial de la aplicación
+import ProductScreen from './screens/ProductScreen'; // Pantalla de los detalles del producto
 
 // Creamos un enrutador con rutas a partir de elementos React:
 const router = createBrowserRouter(
@@ -23,6 +24,8 @@ const router = createBrowserRouter(
     <Route path="/" element={<App />}>
       {/* Ruta anidada para "/", renderiza la pantalla de inicio: */}
       <Route index={true} path="/" element={<HomeScreen />} />
+      {/* Ruta para poder acceder a los detalles del producto */}
+      <Route path='/product/:id' element={<ProductScreen />} />
     </Route>
   )
 );
