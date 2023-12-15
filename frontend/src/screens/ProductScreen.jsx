@@ -1,16 +1,27 @@
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap';
 import Rating from '../components/Rating';
-import products from '../products';
+import axios from 'axios';
 
 // Componente funcional que representará la sección de los detalles del Producto
 const ProductScreen = () => {
     // Obtener el valor del parámetro 'id'
     const { id: productId } = useParams(); // Asignarlo a 'productId'
-    
-    // Encontrar el producto, de la lista de productos, que coincida con el ID obtenido
-    const product = products.find((p) => p._id === productId);
+
+    // Estado para manejar el objeto del producto que coincidirá con el id especificado
+    const [product, setProduct] = useState({});
+
+    // Utilizando este hook para poder obtener los datos del producto
+    useEffect(() => {
+        // Método asíncrono para poder conectarnos con el servidor
+        const fetchProduct = async () => {
+            const { data } = await axios.get(`/api/products/${productId}`);
+            setProduct(data);
+        };
+        fetchProduct();
+    }, [productId]); // Si el 'productId' cambia, que se renderice nuevamente
 
     return (
         <>

@@ -1,10 +1,24 @@
 // Importación de componentes de React Bootstrap y componentes personalizados
+import { useState, useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import Product from '../components/Product'; // Importación del componente Product
-import products from '../products'; // Importación de la lista de productos
+import Product from '../components/Product';
+import axios from 'axios';
 
 // Componente funcional HomeScreen
 const HomeScreen = () => {
+    // Estado para manejar los productos
+    const [products, setProducts] = useState([]);
+
+    // Hook para poder obtener los datos de los productos
+    useEffect(() => {
+        // Método asíncrono para conectarnos con el servidor
+        const fetchProducts = async () => {
+            const { data } = await axios.get('/api/products');
+            setProducts(data);
+        };
+        fetchProducts();
+    }, []);
+
     // Renderización del componente
     return (
         // Fragmento de React para agrupar múltiples elementos sin añadir nodos extra al DOM
