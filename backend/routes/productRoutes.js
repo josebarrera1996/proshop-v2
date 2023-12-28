@@ -30,7 +30,8 @@ router.get(
             return res.json(product);
         }
         // Si el producto no existe, envía un error 404 con un mensaje
-        res.status(404).json({ message: 'Product not found' });
+        res.status(404);
+        throw new Error('Resource not found');
     })
 );
 
