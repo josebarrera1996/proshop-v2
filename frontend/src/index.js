@@ -1,12 +1,14 @@
-import React from 'react'; // Biblioteca fundamental de React
-import ReactDOM from 'react-dom/client'; // Para renderizar React en el DOM
+import React from 'react';
+import ReactDOM from 'react-dom/client'; 
 import {
-  createBrowserRouter, // Crea un enrutador de rutas
-  createRoutesFromElements, // Crea rutas a partir de elementos React
-  Route, // Define una ruta con un componente asociado
-  RouterProvider, // Proporciona el enrutador al resto de la aplicación
-} from 'react-router-dom'; // Librería para manejo de rutas en React
+  createBrowserRouter, 
+  createRoutesFromElements,
+  Route, 
+  RouterProvider, 
+} from 'react-router-dom'; 
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
+import store from './store';
 
 // Importamos archivos de estilos:
 import './assets/styles/bootstrap.custom.css'; // Estilos personalizados de Bootstrap
@@ -36,8 +38,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 // Renderizamos la aplicación en modo estricto (para detectar errores):
 root.render(
   <React.StrictMode>
+    {/* Implementando Redux en toda la app */}
+    <Provider store={store}>
     {/* Proporcionamos el enrutador a la aplicación: */}
-    <RouterProvider router={router} />
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>
 );
 
