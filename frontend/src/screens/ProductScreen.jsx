@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap';
 import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
 import Rating from '../components/Rating';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
 
 // Componente funcional que representará la sección de los detalles del Producto
 const ProductScreen = () => {
@@ -23,12 +25,14 @@ const ProductScreen = () => {
             <Link className='btn btn-light my-3' to='/'>
                 Go Back
             </Link>
-            {/* Cargando... */}
+            {/* Si se está cargando los datos del producto, mostrar el spinner de 'Loader' */}
             {isLoading ? (
-                <div>Loading...</div>
+                <Loader />
             ) : error ? (
-                // En caso de error, mostrar el siguiente mensaje:
-                <div>{error?.data.message || error.error}</div>
+                // En caso de error, mostrar el siguiente mensaje en una alerta con 'Message'
+                <Message variant='danger'>
+                    {error?.data?.message || error.error}
+                </Message>
             ) : (
                 // Carga extiosa
                 <>

@@ -2,6 +2,8 @@
 import { useGetProductsQuery } from '../slices/productsApiSlice';
 import { Row, Col } from 'react-bootstrap';
 import Product from '../components/Product';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
 
 // Componente funcional HomeScreen
 const HomeScreen = () => {
@@ -13,12 +15,15 @@ const HomeScreen = () => {
     return (
         // Utilizamos fragmentos para agrupar múltiples elementos
         <>
-            {/* Mostramos un mensaje de carga si los datos aún están cargándose */}
+            {/* Mostramos el Spinner 'Loader' si los datos aún están cargándose */}
             {isLoading ? (
-                <div>Loading...</div>
+                <Loader />
             ) : error ? ( // Si hay un error, lo mostramos
                 // Se verifica primero si hay un mensaje de error en los datos, de lo contrario se muestra error.error
-                <div>{error?.data.message || error.error}</div>
+                // La forma en la que se mostrará todo esto es a través de la alert definida en 'Message'
+                <Message variant='danger'>
+                    {error?.data?.message || error.error}
+                </Message>
             ) : (
                 // Renderización de los productos si no hay errores y no se están cargando
                 <>
