@@ -1,7 +1,10 @@
-import { useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap';
+import { Row, Col, Image, ListGroup, Card, Form, Button } from 'react-bootstrap';
 import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
+import { addToCart } from '../slices/cartSlice';
 import Rating from '../components/Rating';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
@@ -19,6 +22,23 @@ const ProductScreen = () => {
         isLoading,
         error,
     } = useGetProductDetailsQuery(productId);
+
+    // Hook de Redux para despachar acciones
+    const dispatch = useDispatch();
+
+    // Hook de React Router para navegar programáticamente
+    const navigate = useNavigate();
+
+    // Estado local para gestionar la cantidad seleccionada del producto
+    const [qty, setQty] = useState(1);
+
+    // Función para manejar el evento de agregar producto al carrito
+    const addToCartHandler = () => {
+        // Despacha la acción addToCart con los detalles del producto y la cantidad
+        dispatch(addToCart({ ...product, qty }));
+        // Navega hacia la página del carrito
+        navigate('/cart');
+    };
 
     return (
         <>
@@ -76,11 +96,39 @@ const ProductScreen = () => {
                                             </Col>
                                         </Row>
                                     </ListGroup.Item>
+                                    {/* Se mostrará esta sección siempre y cuando haya stock del producto */}
+                                    {product.countInStock > 0 && (
+                                        <ListGroup.Item>
+                                            <Row>
+                                                <Col>Qty</Col>
+                                                <Col>
+                                                    {/* Selector de cantidad */}
+                                                    <Form.Control
+                                                        as='select'
+                                                        value={qty}
+                                                        onChange={(e) => setQty(e.target.value)}
+                                                    >
+                                                        {/* Generando las opciones de cantidad basadas en el stock disponible */}
+                                                        {/* [...Array(product.countInStock).keys()] crea un array desde 0 hasta el número de items en stock */}
+                                                        {/* Mapeando cada número a un elemento <option> en el selector */}
+                                                        {[...Array(product.countInStock).keys()].map(
+                                                            (x) => (
+                                                                <option key={x + 1} value={x + 1}>
+                                                                    {x + 1}
+                                                                </option>
+                                                            )
+                                                        )}
+                                                    </Form.Control>
+                                                </Col>
+                                            </Row>
+                                        </ListGroup.Item>
+                                    )}
                                     <ListGroup.Item>
                                         <Button
                                             className='btn-block'
                                             type='button'
                                             disabled={product.countInStock === 0}
+                                            onClick={addToCartHandler}
                                         >
                                             Add To Cart
                                         </Button>

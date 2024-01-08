@@ -2,14 +2,19 @@
 import { configureStore } from '@reduxjs/toolkit';
 // Importamos apiSlice que contiene nuestras operaciones y configuraciones de la API
 import { apiSlice } from './slices/apiSlice';
+// Importamos cartSlice que contiene las operaciones para trabajar con el carrito
+import cartSliceReducer from './slices/cartSlice';
 
 // Creamos la configuración de nuestra tienda Redux con configureStore
 const store = configureStore({
-    // Asignamos el reducer de apiSlice al almacenamiento de estado global
+    // Asignaciones de los reducers de los slices
     reducer: {
+        // Asignamos el reducer de apiSlice al almacenamiento de estado global
         // La propiedad reducerPath de apiSlice se utiliza como clave,
         // y el reducer correspondiente como valor
         [apiSlice.reducerPath]: apiSlice.reducer,
+        // Asignamos el reducer de cartSlice al almacenamiento de estado global
+        cart: cartSliceReducer,
     },
     // Añadimos el middleware de apiSlice al conjunto predeterminado de middlewares
     middleware: (getDefaultMiddleware) =>
