@@ -106,7 +106,7 @@ const ProductScreen = () => {
                                                     <Form.Control
                                                         as='select'
                                                         value={qty}
-                                                        onChange={(e) => setQty(e.target.value)}
+                                                        onChange={(e) => setQty(Number(e.target.value))}
                                                     >
                                                         {/* Generando las opciones de cantidad basadas en el stock disponible */}
                                                         {/* [...Array(product.countInStock).keys()] crea un array desde 0 hasta el número de items en stock */}

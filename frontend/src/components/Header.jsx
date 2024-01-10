@@ -1,5 +1,7 @@
+// Importando el siguiente hook de Redux 
+import { useSelector } from 'react-redux';
 // Importación de componentes necesarios de react-bootstrap y react-icons
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Navbar, Nav, Container, Badge } from 'react-bootstrap';
 import { FaShoppingCart, FaUser } from 'react-icons/fa';
 // Bootstrap navegable
 import { LinkContainer } from 'react-router-bootstrap';
@@ -8,9 +10,11 @@ import Logo from '../assets/logo.png';
 
 // Definición del componente funcional Header
 const Header = () => {
-    // Renderización del componente
+    // Utilizando el hook para poder acceder al state 'cart' que está dentro del 'store'
+    // Y utilizar el 'cartItems'
+    const { cartItems } = useSelector((state) => state.cart);
+
     return (
-        // Elemento <header> para la semántica HTML y estructura de la página
         <header>
             {/* Navbar de react-bootstrap para la navegación. Configurado para un fondo oscuro y variante oscura. */}
             <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
@@ -33,6 +37,12 @@ const Header = () => {
                             <LinkContainer to='/cart'>
                                 <Nav.Link>
                                     <FaShoppingCart /> Cart
+                                    {/* Mostrar la cantidad de items en el carrito (siempre y cuando los haya) */}
+                                    {cartItems.length > 0 && (
+                                        <Badge pill bg='success' style={{ marginLeft: '5px' }}>
+                                            {cartItems.reduce((a, c) => a + c.qty, 0)}
+                                        </Badge>
+                                    )}
                                 </Nav.Link>
                             </LinkContainer>
                             {/* Enlace de la Navbar con ícono de usuario, lleva a la página de inicio de sesión */}
