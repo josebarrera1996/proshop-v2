@@ -1,11 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client'; 
+import ReactDOM from 'react-dom/client';
 import {
-  createBrowserRouter, 
+  createBrowserRouter,
   createRoutesFromElements,
-  Route, 
-  RouterProvider, 
-} from 'react-router-dom'; 
+  Route,
+  RouterProvider,
+} from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import store from './store';
@@ -18,6 +18,7 @@ import './assets/styles/index.css'; // Estilos base de la aplicación
 import App from './App'; // Componente principal de la aplicación
 import HomeScreen from './screens/HomeScreen'; // Pantalla inicial de la aplicación
 import ProductScreen from './screens/ProductScreen'; // Pantalla de los detalles del producto
+import CartScreen from './screens/CartScreen'; // Pantalla de los detalles de los productos del carrito
 
 // Creamos un enrutador con rutas a partir de elementos React:
 const router = createBrowserRouter(
@@ -28,6 +29,8 @@ const router = createBrowserRouter(
       <Route index={true} path="/" element={<HomeScreen />} />
       {/* Ruta para poder acceder a los detalles del producto */}
       <Route path='/product/:id' element={<ProductScreen />} />
+      {/* Ruta para poder acceder a los detalles del carrito */}
+      <Route path='/cart' element={<CartScreen />} />
     </Route>
   )
 );
@@ -40,7 +43,7 @@ root.render(
   <React.StrictMode>
     {/* Implementando Redux en toda la app */}
     <Provider store={store}>
-    {/* Proporcionamos el enrutador a la aplicación: */}
+      {/* Proporcionamos el enrutador a la aplicación: */}
       <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>
