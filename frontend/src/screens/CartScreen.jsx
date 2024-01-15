@@ -28,6 +28,15 @@ const CartScreen = () => {
         dispatch(removeFromCart(id));
     };
 
+    // Función para manejar la navegación
+    // Utiliza el hook useNavigate de React Router para cambiar la ruta de la aplicación
+    const checkoutHandler = () => {
+        // Redirige al usuario a la página de inicio de sesión
+        // Si el usuario no está autenticado, después del inicio de sesión será redirigido a la página de envío
+        // Esto se logra añadiendo una cadena de consulta '?redirect=/shipping' a la URL
+        navigate('/login?redirect=/shipping');
+    };
+
     return (
         <Row>
             <Col md={8}>
@@ -104,6 +113,7 @@ const CartScreen = () => {
                                 type='button'
                                 className='btn-block'
                                 disabled={cartItems.length === 0}
+                                onClick={checkoutHandler}
                             >
                                 Proceed To Checkout
                             </Button>
