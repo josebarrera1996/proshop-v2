@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import productRoutes from './routes/productRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 
 // Configuración para poder utilizar las variables de entorno
@@ -18,6 +19,7 @@ const app = express();
 
 // Implementando los enrutadores
 app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
 
 // Middlewares para el manejo de errores
 app.use(notFound);
