@@ -17,6 +17,10 @@ connectDB();
 // Inicializando a Express
 const app = express();
 
+// Middlewares para manejar lo recibido
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Implementando los enrutadores
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);

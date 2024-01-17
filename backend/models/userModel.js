@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 // Definición del esquema para los usuarios
 const userSchema = mongoose.Schema(
@@ -26,6 +27,12 @@ const userSchema = mongoose.Schema(
         timestamps: true,
     }
 );
+
+// Método añadido al Schema para comparar contraseñas (la ingresada con la almacenada en la b.d)
+userSchema.methods.matchPassword = async function (enteredPassword) {
+    // Compara la contraseña ingresada con la contraseña almacenada usando bcrypt
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
 // Creación del modelo 'User' basado en el esquema de usuario
 const User = mongoose.model('User', userSchema);

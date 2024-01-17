@@ -16,7 +16,7 @@ const router = express.Router();
 
 // Definiendo las rutas
 router.route('/').post(registerUser).get(getUsers);
-router.post('/login', authUser);
+router.post('/auth', authUser);
 router.post('/logout', logoutUser);
 router.route('/profile').get(getUserProfile).put(updateUserProfile);
 router.route('/:id').delete(deleteUser).get(getUserById).put(updateUser);
