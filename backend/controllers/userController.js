@@ -1,3 +1,5 @@
+// Importando jwt para trabajar con la autenticación
+import jwt from 'jsonwebtoken';
 // Importamos asyncHandler, un middleware personalizado para manejar excepciones en controladores asíncronos
 import asyncHandler from '../middlewares/asyncHandler.js';
 import User from '../models/userModel.js';
@@ -15,6 +17,19 @@ const authUser = asyncHandler(async (req, res) => {
 
     // Verifica si se encontró un usuario y si la contraseña es correcta
     if (user && (await user.matchPassword(password))) {
+        // Genera un token JWT que incluye el ID del usuario
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+            expiresIn: '1h',  
+        });
+
+        // Setea el token JWT como una cookie HTTP-Only
+        res.cookie('jwt', token, {
+            httpOnly: true, // Hace que la cookie sea accesible solo a través de HTTP
+            secure: process.env.NODE_ENV !== 'development', // Utiliza cookies seguras en producción
+            sameSite: 'strict', // Previene ataques CSRF
+            maxAge: 60 * 60 * 1000, // Tiempo de vida de la cookie: 1 hora en milisegundos
+        });
+
         // Si la autenticación es exitosa, responde con los datos del usuario (sin incluir la contraseña)
         res.json({
             _id: user._id, // ID del usuario
