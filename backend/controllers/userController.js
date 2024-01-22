@@ -19,7 +19,7 @@ const authUser = asyncHandler(async (req, res) => {
     if (user && (await user.matchPassword(password))) {
         // Genera un token JWT que incluye el ID del usuario
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-            expiresIn: '1h',  
+            expiresIn: '1h',
         });
 
         // Setea el token JWT como una cookie HTTP-Only
@@ -56,9 +56,16 @@ const registerUser = asyncHandler(async (req, res) => {
 // @desc Deslogear usuario / limpiar la cookie
 // @route POST /api/users/logout
 // @access Private
-const logoutUser = asyncHandler(async (req, res) => {
-    res.send('logout user');
-})
+const logoutUser = (req, res) => {
+    // Limpia la cookie 'jwt' al establecer su valor como una cadena vacía y configurando las opciones
+    res.cookie('jwt', '', {
+        httpOnly: true, // La cookie solo es accesible a través de HTTP y no a través de JavaScript del lado del cliente
+        expires: new Date(0), // Establece la fecha de expiración en el pasado para eliminar la cookie
+    });
+
+    // Responde con un estado 200 (Éxito) y un mensaje indicando que se cerró sesión correctamente
+    res.status(200).json({ message: 'Logged out successfully' });
+};
 
 // @desc    Obtener el perfil del usuario
 // @route   GET /api/users/profile
