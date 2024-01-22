@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 // Importamos asyncHandler, un middleware personalizado para manejar excepciones en controladores asíncronos
 import asyncHandler from '../middlewares/asyncHandler.js';
 import User from '../models/userModel.js';
+import generateToken from '../utils/generateToken.js';
 
 // @desc    Autenticar usuario (login)
 // @route   POST /api/users/auth
@@ -17,18 +18,8 @@ const authUser = asyncHandler(async (req, res) => {
 
     // Verifica si se encontró un usuario y si la contraseña es correcta
     if (user && (await user.matchPassword(password))) {
-        // Genera un token JWT que incluye el ID del usuario
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-            expiresIn: '1h',
-        });
-
-        // Setea el token JWT como una cookie HTTP-Only
-        res.cookie('jwt', token, {
-            httpOnly: true, // Hace que la cookie sea accesible solo a través de HTTP
-            secure: process.env.NODE_ENV !== 'development', // Utiliza cookies seguras en producción
-            sameSite: 'strict', // Previene ataques CSRF
-            maxAge: 60 * 60 * 1000, // Tiempo de vida de la cookie: 1 hora en milisegundos
-        });
+        // Genera y establece un token JWT como cookie para la autenticación del usuario
+        generateToken(res, user._id);
 
         // Si la autenticación es exitosa, responde con los datos del usuario (sin incluir la contraseña)
         res.json({
@@ -50,7 +41,40 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-    res.send('register user');
+    // Extrae los datos del cuerpo de la petición
+    const { name, email, password } = req.body;
+
+    // Verifica si ya existe un usuario con el mismo correo electrónico
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+        res.status(400); // Código de respuesta 400 (Bad Request)
+        throw new Error('User already exists'); // Lanza un error indicando que el usuario ya existe
+    }
+
+    // Crea un nuevo usuario utilizando el modelo User y los datos proporcionados
+    const user = await User.create({
+        name,
+        email,
+        password,
+    });
+
+    // Verifica si el usuario se ha creado exitosamente
+    if (user) {
+        // Genera y establece un token JWT como cookie para la autenticación del usuario
+        generateToken(res, user._id);
+
+        // Responde con los detalles del usuario recién creado
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            isAdmin: user.isAdmin,
+        });
+    } else {
+        res.status(400); // Código de respuesta 400 (Bad Request)
+        throw new Error('Invalid user data'); // Lanza un error indicando que los datos del usuario son inválidos
+    }
 });
 
 // @desc Deslogear usuario / limpiar la cookie
