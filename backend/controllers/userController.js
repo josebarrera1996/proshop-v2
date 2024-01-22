@@ -95,14 +95,57 @@ const logoutUser = (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
-    res.send('get user profile');
+    // Busca al usuario por su ID en la base de datos
+    const user = await User.findById(req.user._id);
+
+    // Verifica si se encontró al usuario
+    if (user) {
+        // Responde con los detalles del perfil del usuario (sin incluir la contraseña)
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            isAdmin: user.isAdmin,
+        });
+    } else {
+        res.status(404); // Código de respuesta 404 (Not Found)
+        throw new Error('User not found'); // Lanza un error indicando que el usuario no fue encontrado
+    }
 });
 
 // @desc    Actualizar el perfil del usuario
 // @route   PUT /api/users/profile
 // @access  Private
 const updateUserProfile = asyncHandler(async (req, res) => {
-    res.send('update user profile');
+    // Busca al usuario por su ID en la base de datos
+    const user = await User.findById(req.user._id);
+
+    // Verifica si se encontró al usuario
+    if (user) {
+        // Actualiza el nombre y el correo electrónico del usuario con los valores proporcionados en el cuerpo de la solicitud
+        // O preservar los que ya estaban (si no se los modificó)
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+
+        // Actualiza la contraseña del usuario si se proporciona en el cuerpo de la solicitud
+        if (req.body.password) {
+            user.password = req.body.password;
+        }
+
+        // Guarda los cambios en la base de datos y obtiene el usuario actualizado
+        const updatedUser = await user.save();
+
+        // Responde con los detalles actualizados del perfil del usuario (sin incluir la contraseña)
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin,
+        });
+    } else {
+        res.status(404); // Código de respuesta 404 (Not Found)
+        throw new Error('User not found'); // Lanza un error indicando que el usuario no fue encontrado
+    }
 });
 
 // @desc    Obtener todos los usuarios
