@@ -19,6 +19,7 @@ import App from './App'; // Componente principal de la aplicación
 import HomeScreen from './screens/HomeScreen'; // Pantalla inicial de la aplicación
 import ProductScreen from './screens/ProductScreen'; // Pantalla de los detalles del producto
 import CartScreen from './screens/CartScreen'; // Pantalla de los detalles de los productos del carrito
+import LoginScreen from './screens/LoginScreen'; // Pantalla de login
 
 // Creamos un enrutador con rutas a partir de elementos React:
 const router = createBrowserRouter(
@@ -31,6 +32,8 @@ const router = createBrowserRouter(
       <Route path='/product/:id' element={<ProductScreen />} />
       {/* Ruta para poder acceder a los detalles del carrito */}
       <Route path='/cart' element={<CartScreen />} />
+      {/* Ruta para poder acceder a el formulario del login */}
+      <Route path='/login' element={<LoginScreen />} />
     </Route>
   )
 );

@@ -1,10 +1,14 @@
-// Importando el siguiente hook de Redux 
-import { useSelector } from 'react-redux';
 // Importación de componentes necesarios de react-bootstrap y react-icons
-import { Navbar, Nav, Container, Badge } from 'react-bootstrap';
+import { Navbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
 import { FaShoppingCart, FaUser } from 'react-icons/fa';
 // Bootstrap navegable
 import { LinkContainer } from 'react-router-bootstrap';
+// Navegación
+import { useNavigate } from 'react-router-dom';
+// Redux
+import { useSelector, useDispatch } from 'react-redux';
+import { useLogoutMutation } from '../slices/usersApiSlice';
+import { logout } from '../slices/authSlice';
 // Importando el Logo de la app
 import Logo from '../assets/logo.png';
 
@@ -13,6 +17,34 @@ const Header = () => {
     // Utilizando el hook para poder acceder al state 'cart' que está dentro del 'store'
     // Y utilizar el 'cartItems'
     const { cartItems } = useSelector((state) => state.cart);
+
+    // Utilizando el hook para poder acceder al state 'auth' que está dentro del 'store'
+    // Y utilizar el 'userInfo'
+    const { userInfo } = useSelector((state) => state.auth);
+
+    // Hook para manejar el 'dispatch' de las acciones
+    const dispatch = useDispatch();
+
+    // Hook para manejar la navegación
+    const navigate = useNavigate();
+
+    // Hook personalizado para manejar el deslogeo
+    const [logoutApiCall] = useLogoutMutation();
+
+    // Método para gestionar el proceso de cierre de sesión del usuario
+    const logoutHandler = async () => {
+        try {
+            // Realiza la llamada a la API para cerrar sesión y desempaqueta la respuesta exitosa
+            await logoutApiCall().unwrap();
+            // Despacha la acción para actualizar el estado de autenticación (logout)
+            dispatch(logout());
+            // Navega al componente de inicio de sesión después del cierre de sesión exitoso
+            navigate('/login');
+        } catch (err) {
+            // Manejo de errores en caso de fallo al cerrar sesión
+            console.error(err);
+        }
+    };
 
     return (
         <header>
@@ -45,19 +77,33 @@ const Header = () => {
                                     )}
                                 </Nav.Link>
                             </LinkContainer>
-                            {/* Enlace de la Navbar con ícono de usuario, lleva a la página de inicio de sesión */}
-                            <LinkContainer to='/login'>
-                                <Nav.Link href='/login'>
-                                    <FaUser /> Sign In
-                                </Nav.Link>
-                            </LinkContainer>
+                            {/* Condicional para mostrar enlace de usuario o dropdown con opciones */}
+                            {userInfo ? (
+                                <>
+                                    {/* Dropdown para el usuario autenticado */}
+                                    <NavDropdown title={userInfo.name} id='username'>
+                                        <LinkContainer to='/profile'>
+                                            <NavDropdown.Item>Profile</NavDropdown.Item>
+                                        </LinkContainer>
+                                        <NavDropdown.Item onClick={logoutHandler}>
+                                            Logout
+                                        </NavDropdown.Item>
+                                    </NavDropdown>
+                                </>
+                            ) : (
+                                // Enlace a la página de inicio de sesión
+                                <LinkContainer LinkContainer to='/login'>
+                                    <Nav.Link>
+                                        <FaUser /> Sign In
+                                    </Nav.Link>
+                                </LinkContainer>
+                            )}
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-        </header>
+        </header >
     );
 };
 
-// Exportación del componente Header para su uso en otras partes de la aplicación
 export default Header;

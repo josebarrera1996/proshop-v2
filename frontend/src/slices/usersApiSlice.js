@@ -11,11 +11,19 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 // Configuración de la solicitud: URL, método y cuerpo de la solicitud
                 url: `${USERS_URL}/auth`, // Construye la URL completa para la autenticación
                 method: 'POST',
-                body: data, 
+                body: data,
+            }),
+        }),
+        // Define un punto final 'logout' para el deslogeo
+        logout: builder.mutation({
+            query: () => ({
+                // Configuración de la solicitud: URL y método
+                url: `${USERS_URL}/logout`,
+                method: 'POST',
             }),
         }),
     }),
 });
 
-// Extrae la función de mutación 'useLoginMutation' del slice de la API de usuario
-export const { useLoginMutation } = usersApiSlice;
+// Extrae las funciones de mutación 'useLoginMutation' y 'useLogoutMutation' del slice de la API de usuario
+export const { useLoginMutation, useLogoutMutation } = usersApiSlice;
