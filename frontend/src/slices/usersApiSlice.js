@@ -14,6 +14,16 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        // Define un punto final 'register' para la registración de un nuevo usuario
+        register: builder.mutation({
+            // Define la consulta (query) para el punto final
+            query: (data) => ({
+                // Configuración de la solicitud: URL, método y cuerpo de la solicitud
+                url: `${USERS_URL}`, // Construye la URL completa para la autenticación
+                method: 'POST',
+                body: data,
+            }),
+        }),
         // Define un punto final 'logout' para el deslogeo
         logout: builder.mutation({
             query: () => ({
@@ -26,4 +36,4 @@ export const usersApiSlice = apiSlice.injectEndpoints({
 });
 
 // Extrae las funciones de mutación 'useLoginMutation' y 'useLogoutMutation' del slice de la API de usuario
-export const { useLoginMutation, useLogoutMutation } = usersApiSlice;
+export const { useLoginMutation, useLogoutMutation, useRegisterMutation } = usersApiSlice;
