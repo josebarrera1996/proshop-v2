@@ -7,7 +7,7 @@ import { updateCart } from '../utils/cartUtils';
 // Si no hay datos en localStorage, se inicializa con un carrito vacío
 const initialState = localStorage.getItem('cart')
     ? JSON.parse(localStorage.getItem('cart')) // Parsea el estado del carrito almacenado en localStorage
-    : { cartItems: [] }; // Estado inicial por defecto con el carrito vacío
+    : { cartItems: [], shippingAddress: {}, paymentMethod: 'PayPal' }; // Estado inicial por defecto con el carrito vacío
 
 // Creación del slice del carrito
 const cartSlice = createSlice({
@@ -42,11 +42,19 @@ const cartSlice = createSlice({
             // Actualiza los precios y los guarda en el almacenamiento local
             return updateCart(state);
         },
+        // Reducer para poder guardar la dirección de envío seleccionada por el usuario
+        saveShippingAddress: (state, action) => {
+            // Actualiza el estado del slice con la dirección de envío proveniente del payload de la acción
+            state.shippingAddress = action.payload;
+
+            // Actualiza la dirección de envío y lo guarda en el almacenamiento local
+            return updateCart(state);
+        },
     },
 });
 
 // Exporta las acciones definidas en el slice
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, saveShippingAddress } = cartSlice.actions;
 
 // Exporta el reducer del slice para su uso en la configuración del store de Redux
 export default cartSlice.reducer;
