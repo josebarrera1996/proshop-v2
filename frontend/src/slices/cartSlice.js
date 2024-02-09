@@ -50,11 +50,24 @@ const cartSlice = createSlice({
             // Actualiza la dirección de envío y lo guarda en el almacenamiento local
             return updateCart(state);
         },
+        // Reducer para poder guardar el método de pago seleccionado por el usuario
+        savePaymentMethod: (state, action) => {
+            // Actualiza el estado del slice con el método de pago proveniente del payload de la acción
+            state.paymentMethod = action.payload;
+
+            // Actualiza el método de pago y lo guarda en el almacenamiento ocal
+            return updateCart(state);
+        },
     },
 });
 
 // Exporta las acciones definidas en el slice
-export const { addToCart, removeFromCart, saveShippingAddress } = cartSlice.actions;
+export const {
+    addToCart,
+    removeFromCart,
+    saveShippingAddress,
+    savePaymentMethod,
+} = cartSlice.actions;
 
 // Exporta el reducer del slice para su uso en la configuración del store de Redux
 export default cartSlice.reducer;
