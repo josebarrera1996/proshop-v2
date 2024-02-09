@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
 import productRoutes from './routes/productRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 import { notFound, errorHandler } from './middlewares/errorMiddleware.js';
 
 // Configuración para poder utilizar las variables de entorno
@@ -26,6 +27,7 @@ app.use(cookieParser());
 // Implementando los enrutadores
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Middlewares para el manejo de errores
 app.use(notFound);
