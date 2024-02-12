@@ -7,14 +7,65 @@ import Order from '../models/orderModel.js';
 // @access  Privado
 // Envuelve el controlador asíncrono con asyncHandler para un manejo de errores adecuado
 const addOrderItems = asyncHandler(async (req, res) => {
-    res.send('create order');
+    // Extraer los siguientes campos del cuerpo de la solicitud
+    const {
+        orderItems,
+        shippingAddress,
+        paymentMethod,
+        itemsPrice,
+        taxPrice,
+        shippingPrice,
+        totalPrice,
+    } = req.body;
+
+    // Verifica si hay elementos en el pedido y si no, devuelve un error
+    if (orderItems && orderItems.length === 0) {
+        res.status(400);
+        throw new Error('No order items');
+    } else {
+        // Crea una nueva instancia de Order con la información proporcionada
+        const order = new Order({
+            // Mapea y transforma los elementos del pedido para asociarlos con el producto correspondiente
+            orderItems: orderItems.map((x) => ({
+                ...x,
+                product: x._id,
+                _id: undefined,
+            })),
+            // Asocia el usuario actual al pedido
+            user: req.user._id,
+            shippingAddress,
+            paymentMethod,
+            itemsPrice,
+            taxPrice,
+            shippingPrice,
+            totalPrice,
+        });
+
+        // Guarda el nuevo pedido en la base de datos
+        const createdOrder = await order.save();
+
+        // Responde con el nuevo pedido creado
+        res.status(201).json(createdOrder);
+    }
 });
 
 // @desc    Obtener pedido por ID
 // @route   GET /api/orders/:id
 // @access  Privado
 const getOrderById = asyncHandler(async (req, res) => {
-    res.send('get order by id');
+    // Busca un pedido por su ID y realiza una operación de poblado para obtener detalles del usuario asociado
+    const order = await Order.findById(req.params.id).populate(
+        'user',
+        'name email'
+    );
+
+    // Verifica si se encontró el pedido y responde con la información o lanza un error si no se encuentra
+    if (order) {
+        res.json(order);
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
 });
 
 // @desc    Actualizar pedido a pagado
@@ -35,7 +86,11 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
 // @route   GET /api/orders/myorders
 // @access  Privado
 const getMyOrders = asyncHandler(async (req, res) => {
-    res.send('get logged in user orders');
+    // Busca todos los pedidos donde el campo 'user' coincide con el ID del usuario logeado
+    const orders = await Order.find({ user: req.user._id });
+
+    // Responde con la lista de pedidos encontrados
+    res.json(orders);
 });
 
 // @desc    Obtener todos los pedidos
