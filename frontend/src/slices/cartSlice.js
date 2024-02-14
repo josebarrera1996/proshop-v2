@@ -58,6 +58,14 @@ const cartSlice = createSlice({
             // Actualiza el método de pago y lo guarda en el almacenamiento ocal
             return updateCart(state);
         },
+        // Reducer para limpiar los items del carrito
+        clearCartItems: (state, action) => {
+            // Actualiza el estado del slice con la limpieza de los items del carrito
+            state.cartItems = [];
+
+            // Actualiza el estado de los items del carrito (sin nada) y lo guarda en el almacenamiento local
+            return updateCart(state);
+        },
     },
 });
 
@@ -67,6 +75,7 @@ export const {
     removeFromCart,
     saveShippingAddress,
     savePaymentMethod,
+    clearCartItems
 } = cartSlice.actions;
 
 // Exporta el reducer del slice para su uso en la configuración del store de Redux

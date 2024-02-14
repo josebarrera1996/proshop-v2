@@ -24,6 +24,7 @@ import RegisterScreen from './screens/RegisterScreen'; // Pantalla para registra
 import PrivateRoutes from './components/PrivateRoutes'; // Lógica para rutas privadas
 import ShippingScreen from './screens/ShippingScreen'; // Pantalla para poder anotar la dirección de envio del pedido
 import PaymentScreen from './screens/PaymentScreen'; // Pantalla para poder seleccionar el método de pago
+import PlaceOrderScreen from './screens/PlaceOrderScreen'; // Pantalla para poder concretar el pedido
 
 // Creamos un enrutador con rutas a partir de elementos React:
 const router = createBrowserRouter(
@@ -45,6 +46,7 @@ const router = createBrowserRouter(
         {/* Ruta con los pasos para poder realizar el 'Checkout' */}
         <Route path='/shipping' element={<ShippingScreen />} />
         <Route path='/payment' element={<PaymentScreen />} />
+        <Route path='/placeorder' element={<PlaceOrderScreen />} />
       </Route>
     </Route>
   )
