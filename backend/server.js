@@ -24,10 +24,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Implementando los enrutadores
+// Implementando los enrutadores (API)
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
+
+// Implementando la ruta para la API de PayPal
+app.get('/api/config/paypal', (req, res) =>
+  res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
+);
 
 // Middlewares para el manejo de errores
 app.use(notFound);

@@ -69,14 +69,36 @@ const getOrderById = asyncHandler(async (req, res) => {
 });
 
 // @desc    Actualizar pedido a pagado
-// @route   GET /api/orders/:id/pay
+// @route   PUT /api/orders/:id/pay
 // @access  Privado
 const updateOrderToPaid = asyncHandler(async (req, res) => {
-    res.send('update order to paid');
+    // Obtener el pedido (por el ID)
+    const order = await Order.findById(req.params.id);
+
+    // Si el pedido existe, actualizarlo a pagado
+    if (order) {
+        order.isPaid = true;
+        order.paidAt = Date.now();
+        order.paymentResult = {
+            id: req.body.id,
+            status: req.body.status,
+            update_time: req.body.update_time,
+            email_address: req.body.payer.email_address,
+        };
+
+        // Guardar la actualización realizada
+        const updatedOrder = await order.save();
+        
+        // Mostrar el objeto del pedido con la actualización
+        res.json(updatedOrder);
+    } else {
+        res.status(404);
+        throw new Error('Order not found');
+    }
 });
 
 // @desc    Actualizar pedido a enviado
-// @route   GET /api/orders/:id/deliver
+// @route   PUT /api/orders/:id/deliver
 // @access  Privado/Admin
 const updateOrderToDelivered = asyncHandler(async (req, res) => {
     res.send('update order to delivered');
