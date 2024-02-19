@@ -63,6 +63,55 @@ const OrderScreen = () => {
         }
     }, [errorPayPal, loadingPayPal, order, paypal, paypalDispatch]);
 
+    // Función que se ejecuta cuando el usuario aprueba el pago mediante PayPal
+    function onApprove(data, actions) {
+        return actions.order.capture().then(async function (details) {
+            try {
+                // Llama a la mutación para pagar el pedido con los detalles capturados
+                await payOrder({ orderId, details });
+                // Vuelve a cargar los detalles del pedido para reflejar los cambios
+                refetch();
+                // Muestra un mensaje de éxito al usuario
+                toast.success('Order is paid');
+            } catch (err) {
+                // Muestra un mensaje de error si hay un problema al pagar el pedido
+                toast.error(err?.data?.message || err.error);
+            }
+        });
+    }
+
+    // Función de prueba para simular el pago del pedido (sin conexión a PayPal)
+    async function onApproveTest() {
+        // Llama a la mutación para pagar el pedido con detalles simulados
+        await payOrder({ orderId, details: { payer: {} } });
+        // Vuelve a cargar los detalles del pedido para reflejar los cambios
+        refetch();
+        // Muestra un mensaje de éxito al usuario
+        toast.success('Order is paid');
+    }
+
+    // Función que se ejecuta en caso de error durante el proceso de pago
+    function onError(err) {
+        // Muestra un mensaje de error al usuario
+        toast.error(err.message);
+    }
+
+    // Función que crea una orden de PayPal con los detalles del pedido
+    function createOrder(data, actions) {
+        return actions.order
+            .create({
+                purchase_units: [
+                    {
+                        amount: { value: order.totalPrice },
+                    },
+                ],
+            })
+            .then((orderID) => {
+                // Devuelve el ID de la orden creada
+                return orderID;
+            });
+    }
+
     return isLoading ? (
         // Muestra un loader mientras se carga la información del pedido
         <Loader />
@@ -192,9 +241,39 @@ const OrderScreen = () => {
                                     <Col>${order.totalPrice}</Col>
                                 </Row>
                             </ListGroup.Item>
-                            {/* Funciones para marcar como pagado y marcar como entregado (a implementar) */}
-                            {/* PAY ORDER PLACEHOLDER */}
-                            {/* {MARK AS DELIVERED PLACEHOLDER} */}
+                            {/* Botones a mostrar si no se ha pagado el pedido */}
+                            {!order.isPaid && (
+                                <ListGroup.Item>
+                                    {/* Muestra un loader mientras se procesa el pago */}
+                                    {loadingPay && <Loader />}
+                                    {/* Verifica si la carga del script de PayPal está en curso */}
+                                    {isPending ? (
+                                        <Loader />
+                                    ) : (
+                                        // Renderiza botones de prueba de pago y botones de PayPal
+                                        <div>
+                                            {/* Botón de prueba para simular el pago sin conexión a PayPal */}
+                                            <Button
+                                                style={{ marginBottom: '10px' }}
+                                                onClick={onApproveTest}
+                                            >
+                                                Test Pay Order
+                                            </Button>
+                                            {/* Componente de botones de PayPal */}
+                                            <div>
+                                                <PayPalButtons
+                                                    // Función para crear un nuevo pedido antes de iniciar el pago
+                                                    createOrder={createOrder}
+                                                    // Función que se ejecuta cuando el pago es aprobado por el usuario
+                                                    onApprove={onApprove}
+                                                    // Función que se ejecuta en caso de error durante el proceso de pago
+                                                    onError={onError}
+                                                ></PayPalButtons>
+                                            </div>
+                                        </div>
+                                    )}
+                                </ListGroup.Item>
+                            )}
                         </ListGroup>
                     </Card>
                 </Col>
