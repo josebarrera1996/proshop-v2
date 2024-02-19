@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import store from './store';
 
 // Importamos archivos de estilos:
@@ -63,8 +64,11 @@ root.render(
   <React.StrictMode>
     {/* Implementando Redux en toda la app */}
     <Provider store={store}>
-      {/* Proporcionamos el enrutador a la aplicación: */}
-      <RouterProvider router={router} />
+      {/* Implementando el proveedor de PayPal */}
+      <PayPalScriptProvider deferLoading={true}>
+        {/* Proporcionamos el enrutador a la aplicación: */}
+        <RouterProvider router={router} />
+      </PayPalScriptProvider>
     </Provider>
   </React.StrictMode>
 );

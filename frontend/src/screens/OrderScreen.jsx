@@ -1,15 +1,67 @@
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Row, Col, ListGroup, Image, Card } from 'react-bootstrap';
+import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap';
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
-import { useGetOrderDetailsQuery } from '../slices/ordersApiSlice';
+import {
+    useGetOrderDetailsQuery,
+    usePayOrderMutation,
+    useGetPaypalClientIdQuery
+} from '../slices/ordersApiSlice';
 
 const OrderScreen = () => {
     // Obtén el ID del pedido de los parámetros de la URL
     const { id: orderId } = useParams();
 
     // Realiza la llamada a la API para obtener detalles del pedido usando el hook personalizado
-    const { data: order, isLoading, error } = useGetOrderDetailsQuery(orderId);
+    const {
+        data: order,
+        refetch,
+        isLoading,
+        error,
+    } = useGetOrderDetailsQuery(orderId);
+
+    // Llamada a la mutación para pagar el pedido utilizando el hook personalizado
+    const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
+
+    // Obtener información del usuario desde el estado global utilizando useSelector
+    const { userInfo } = useSelector((state) => state.auth);
+
+    // Obtener el estado y el despachador del script de PayPal utilizando usePayPalScriptReducer
+    const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+
+    // Realizar la llamada a la API para obtener el ID de cliente de PayPal utilizando el hook personalizado
+    const {
+        data: paypal,
+        isLoading: loadingPayPal,
+        error: errorPayPal,
+    } = useGetPaypalClientIdQuery();
+
+    useEffect(() => {
+        if (!errorPayPal && !loadingPayPal && paypal.clientId) {
+            // Cargar el script de PayPal cuando el ID del cliente de PayPal esté disponible
+            const loadPaypalScript = async () => {
+                // Restablecer las opciones y establecer el estado de carga del script de PayPal
+                paypalDispatch({
+                    type: 'resetOptions',
+                    value: {
+                        'client-id': paypal.clientId,
+                        currency: 'USD',
+                    },
+                });
+                paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
+            };
+            // Verificar si el pedido no está pagado y el script de PayPal no está cargado
+            if (order && !order.isPaid) {
+                if (!window.paypal) {
+                    loadPaypalScript();
+                }
+            }
+        }
+    }, [errorPayPal, loadingPayPal, order, paypal, paypalDispatch]);
 
     return isLoading ? (
         // Muestra un loader mientras se carga la información del pedido
