@@ -37,9 +37,17 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
         }),
         // Define un endpoint 'getPayPalClientId' para poder obtener el client id de PayPal
         getPaypalClientId: builder.query({
+            // Define la consulta (query) para el punto final
             query: () => ({
-                // Define la consulta (query) para el punto final
                 url: PAYPAL_URL,
+            }),
+            keepUnusedDataFor: 5,
+        }),
+        // Define un endpoint 'getMyOrders' para poder ver los pedidos del usuario logeado
+        getMyOrders: builder.query({
+            // Define la consulta (query) para el punto final
+            query: () => ({
+                url: `${ORDERS_URL}/mine`,
             }),
             keepUnusedDataFor: 5,
         }),
@@ -51,5 +59,6 @@ export const {
     useCreateOrderMutation,
     useGetOrderDetailsQuery,
     usePayOrderMutation,
-    useGetPaypalClientIdQuery
+    useGetPaypalClientIdQuery,
+    useGetMyOrdersQuery
 } = ordersApiSlice;
