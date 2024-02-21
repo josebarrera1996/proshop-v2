@@ -27,6 +27,7 @@ import ShippingScreen from './screens/ShippingScreen'; // Pantalla para poder an
 import PaymentScreen from './screens/PaymentScreen'; // Pantalla para poder seleccionar el método de pago
 import PlaceOrderScreen from './screens/PlaceOrderScreen'; // Pantalla para poder concretar el pedido
 import OrderScreen from './screens/OrderScreen'; // Pantalla para poder ver el/los pedido/s 
+import ProfileScreen from './screens/ProfileScreen'; // Pantalla para poder ver los datos del usuario (y hasta actualizarlos)
 
 // Creamos un enrutador con rutas a partir de elementos React:
 const router = createBrowserRouter(
@@ -51,6 +52,8 @@ const router = createBrowserRouter(
         <Route path='/placeorder' element={<PlaceOrderScreen />} />
         {/* Ruta para poder ver los pedidos (por ID) */}
         <Route path='/order/:id' element={<OrderScreen />} />
+        {/* Ruta para poder ver los datos del usuario y actualizarlos */}
+        <Route path='/profile' element={<ProfileScreen />} />
       </Route>
     </Route>
   )

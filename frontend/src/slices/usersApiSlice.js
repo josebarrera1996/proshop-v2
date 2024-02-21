@@ -26,14 +26,30 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         }),
         // Define un punto final 'logout' para el deslogeo
         logout: builder.mutation({
+            // Define la consulta (query) para el punto final
             query: () => ({
                 // Configuración de la solicitud: URL y método
                 url: `${USERS_URL}/logout`,
                 method: 'POST',
             }),
         }),
+        // Define un punto final 'profile' para actualizar los datos del usuario logeado
+        profile: builder.mutation({
+            // Define la consulta (query) para el punto final
+            query: (data) => ({
+                // Configuración de la solicitud: URL, método y cuerpo de la solicitud
+                url: `${USERS_URL}/profile`,
+                method: 'PUT',
+                body: data,
+            }),
+        }),
     }),
 });
 
 // Extrae las funciones de mutación 'useLoginMutation' y 'useLogoutMutation' del slice de la API de usuario
-export const { useLoginMutation, useLogoutMutation, useRegisterMutation } = usersApiSlice;
+export const {
+    useLoginMutation,
+    useLogoutMutation,
+    useRegisterMutation,
+    useProfileMutation
+} = usersApiSlice;
