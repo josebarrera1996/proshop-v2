@@ -22,12 +22,16 @@ import ProductScreen from './screens/ProductScreen'; // Pantalla de los detalles
 import CartScreen from './screens/CartScreen'; // Pantalla de los detalles de los productos del carrito
 import LoginScreen from './screens/LoginScreen'; // Pantalla de login
 import RegisterScreen from './screens/RegisterScreen'; // Pantalla para registrarse
+/* Rutas privadas (solo para usuarios logeados) */
 import PrivateRoutes from './components/PrivateRoutes'; // Lógica para rutas privadas
 import ShippingScreen from './screens/ShippingScreen'; // Pantalla para poder anotar la dirección de envio del pedido
 import PaymentScreen from './screens/PaymentScreen'; // Pantalla para poder seleccionar el método de pago
 import PlaceOrderScreen from './screens/PlaceOrderScreen'; // Pantalla para poder concretar el pedido
 import OrderScreen from './screens/OrderScreen'; // Pantalla para poder ver el/los pedido/s 
 import ProfileScreen from './screens/ProfileScreen'; // Pantalla para poder ver los datos del usuario (y hasta actualizarlos)
+/* Rutas privadas (solo para usuarios logeados) y con acceso solo para los admins */
+import AdminRoute from './components/AdminRoute';
+import OrderListScreen from './screens/admin/OrderListScreen'; // Pantalla para poder ver los pedidos
 
 // Creamos un enrutador con rutas a partir de elementos React:
 const router = createBrowserRouter(
@@ -54,6 +58,10 @@ const router = createBrowserRouter(
         <Route path='/order/:id' element={<OrderScreen />} />
         {/* Ruta para poder ver los datos del usuario y actualizarlos */}
         <Route path='/profile' element={<ProfileScreen />} />
+      </Route>
+      {/* Rutas privadas (para usuarios logeados y que sean 'admin') */}
+      <Route path='' element={<AdminRoute />}>
+        <Route path='/admin/orderlist' element={<OrderListScreen />} />
       </Route>
     </Route>
   )
