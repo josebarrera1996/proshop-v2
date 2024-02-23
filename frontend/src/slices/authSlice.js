@@ -10,8 +10,8 @@ const initialState = {
 
 // Crea un slice de Redux llamado 'auth'
 const authSlice = createSlice({
-    name: 'auth', 
-    initialState, 
+    name: 'auth',
+    initialState,
     reducers: {
         // Reducer para establecer las credenciales del usuario
         setCredentials: (state, action) => {
@@ -20,14 +20,21 @@ const authSlice = createSlice({
 
             // Almacena la información del usuario en el almacenamiento local
             localStorage.setItem('userInfo', JSON.stringify(action.payload));
+
+            // Definiendo la constante que tendrá el tiempo de expiración
+            const expirationTime = new Date().getTime() + 60 * 60 * 1000; // 1 hora
+
+            // Almacena el tiempo de expiración en el almacenamiento local
+            localStorage.setItem('expirationTime', expirationTime);
         },
         // Reducer para cerrar sesión y eliminar las credenciales del usuario
         logout: (state, action) => {
             // Establece la información del usuario en null
             state.userInfo = null;
 
-            // Elimina la información del usuario del almacenamiento local
+            // Eliminando la información del usuario & el tiempo de expiración del almacenamiento local
             localStorage.removeItem('userInfo');
+            localStorage.removeItem('expirationTime');
         },
     },
 });

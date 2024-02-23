@@ -1,7 +1,10 @@
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Container } from 'react-bootstrap'; // El contenedor con estilo de Bootstrap
 import { Outlet } from 'react-router-dom'; // El lugar donde se renderizará el contenido de las rutas
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import { logout } from './slices/authSlice';
 
 // Implementando el contenedor para las alertas
 import { ToastContainer } from 'react-toastify';
@@ -9,7 +12,26 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Definimos el componente principal de la aplicación como una función
 const App = () => {
-  // El componente devolverá un fragmento de código JSX.
+  // Hook para realizar el dispatch de acciones
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Obtener la 'expirationTime' del almacenamiento local
+    const expirationTime = localStorage.getItem('expirationTime');
+
+    // Verificar si 'expirationTime' está presente
+    if (expirationTime) {
+      // Obtener el tiempo actual en milisegundos
+      const currentTime = new Date().getTime();
+
+      // Verificar si el tiempo actual es mayor que 'expirationTime' (indicando que ha expirado)
+      if (currentTime > expirationTime) {
+        // Si ha expirado, despachar la acción 'logout' para cerrar la sesión
+        dispatch(logout());
+      }
+    }
+  }, [dispatch]);
+
   return (
     <>
       {/* Contenedor de las alertas 'Toast' */}
