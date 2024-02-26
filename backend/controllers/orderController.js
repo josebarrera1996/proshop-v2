@@ -101,7 +101,25 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
 // @route   PUT /api/orders/:id/deliver
 // @access  Privado/Admin
 const updateOrderToDelivered = asyncHandler(async (req, res) => {
-    res.send('update order to delivered');
+    // Buscar el pedido por ID
+    const order = await Order.findById(req.params.id);
+
+    // Verificar si se encuentra el pedido
+    if (order) {
+        // Actualizar el estado de entrega y establecer la fecha de entrega actual
+        order.isDelivered = true;
+        order.deliveredAt = Date.now();
+
+        // Guardar la orden actualizada en la base de datos
+        const updatedOrder = await order.save();
+
+        // Enviar la orden actualizada como respuesta JSON
+        res.json(updatedOrder);
+    } else {
+        // Si no se encuentra el pedido, devolver un código de estado 404 y lanzar un error
+        res.status(404);
+        throw new Error('Order not found');
+    }
 });
 
 // @desc    Obtener los pedidos realizados (aplicado para el usuario logeado)

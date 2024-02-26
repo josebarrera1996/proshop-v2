@@ -9,7 +9,8 @@ import Loader from '../components/Loader';
 import {
     useGetOrderDetailsQuery,
     usePayOrderMutation,
-    useGetPaypalClientIdQuery
+    useGetPaypalClientIdQuery,
+    useDeliverOrderMutation
 } from '../slices/ordersApiSlice';
 
 const OrderScreen = () => {
@@ -26,6 +27,10 @@ const OrderScreen = () => {
 
     // Llamada a la mutación para pagar el pedido utilizando el hook personalizado
     const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
+
+    // Llamada a la mutación para marcar el pedido como enviado utilizando el hook personalizado
+    const [deliverOrder, { isLoading: loadingDeliver }] =
+        useDeliverOrderMutation();
 
     // Obtener información del usuario desde el estado global utilizando useSelector
     const { userInfo } = useSelector((state) => state.auth);
@@ -111,6 +116,15 @@ const OrderScreen = () => {
                 return orderID;
             });
     }
+
+    // Función para marcar el pedido como enviado
+    const deliverHandler = async () => {
+        await deliverOrder(orderId);
+        // Vuelve a cargar los detalles del pedido para reflejar los cambios
+        refetch();
+        // Muestra un mensaje de éxito al usuario
+        toast.success('Order delivered');
+    };
 
     return isLoading ? (
         // Muestra un loader mientras se carga la información del pedido
@@ -274,6 +288,22 @@ const OrderScreen = () => {
                                     )}
                                 </ListGroup.Item>
                             )}
+                            {/* Sección para marcar el pedido como enviado (si el usuario es 'Admin' y se ha pagado el pedido) */}
+                            {loadingDeliver && <Loader />}
+                            {userInfo &&
+                                userInfo.isAdmin &&
+                                order.isPaid &&
+                                !order.isDelivered && (
+                                    <ListGroup.Item>
+                                        <Button
+                                            type='button'
+                                            className='btn btn-block'
+                                            onClick={deliverHandler}
+                                        >
+                                            Mark As Delivered
+                                        </Button>
+                                    </ListGroup.Item>
+                                )}
                         </ListGroup>
                     </Card>
                 </Col>

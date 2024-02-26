@@ -59,6 +59,15 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
             }),
             keepUnusedDataFor: 5,
         }),
+        // Define un endpoint 'deliverOrder' para poder actualizar el pedido a entregado
+        deliverOrder: builder.mutation({
+            // Define la consulta (query) para el punto final
+            query: (orderId) => ({
+                // Configuración de la solicitud: URL y el método
+                url: `${ORDERS_URL}/${orderId}/deliver`,
+                method: 'PUT',
+            }),
+        }),
     }),
 });
 
@@ -69,5 +78,6 @@ export const {
     usePayOrderMutation,
     useGetPaypalClientIdQuery,
     useGetMyOrdersQuery,
-    useGetOrdersQuery
+    useGetOrdersQuery,
+    useDeliverOrderMutation
 } = ordersApiSlice;
