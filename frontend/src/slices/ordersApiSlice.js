@@ -51,6 +51,14 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
             }),
             keepUnusedDataFor: 5,
         }),
+        // Define un endpoint 'getOrders' para poder ver todos los pedidos de los usuarios
+        getOrders: builder.query({
+            // Define la consulta (query) para el punto final
+            query: () => ({
+                url: ORDERS_URL,
+            }),
+            keepUnusedDataFor: 5,
+        }),
     }),
 });
 
@@ -60,5 +68,6 @@ export const {
     useGetOrderDetailsQuery,
     usePayOrderMutation,
     useGetPaypalClientIdQuery,
-    useGetMyOrdersQuery
+    useGetMyOrdersQuery,
+    useGetOrdersQuery
 } = ordersApiSlice;

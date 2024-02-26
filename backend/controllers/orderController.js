@@ -88,7 +88,7 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
 
         // Guardar la actualización realizada
         const updatedOrder = await order.save();
-        
+
         // Mostrar el objeto del pedido con la actualización
         res.json(updatedOrder);
     } else {
@@ -119,7 +119,9 @@ const getMyOrders = asyncHandler(async (req, res) => {
 // @route   GET /api/orders
 // @access  Privado/Admin
 const getOrders = asyncHandler(async (req, res) => {
-    res.send('get all orders');
+    // Obtener los pedidos (populados con los datos especificados del usuario)
+    const orders = await Order.find({}).populate('user', 'id name');
+    res.json(orders);
 });
 
 // Exportando los métodos
