@@ -12,7 +12,7 @@ const generateToken = (res, userId) => {
         httpOnly: true, // La cookie solo es accesible a través de HTTP y no a través de JavaScript del lado del cliente
         secure: process.env.NODE_ENV !== 'development', // Utiliza cookies seguras en producción para conexiones HTTPS
         sameSite: 'strict', // Previene ataques CSRF al limitar el envío de cookies a peticiones del mismo sitio
-        maxAge: 60 * 60 * 1000, // Duración máxima de la cookie: 1 hora en milisegundos
+        maxAge: 24 * 60 * 60 * 1000, // Duración máxima de la cookie: 1 día en milisegundos
     });
 };
 

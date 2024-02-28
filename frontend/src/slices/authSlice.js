@@ -22,7 +22,7 @@ const authSlice = createSlice({
             localStorage.setItem('userInfo', JSON.stringify(action.payload));
 
             // Definiendo la constante que tendrá el tiempo de expiración
-            const expirationTime = new Date().getTime() + 60 * 60 * 1000; // 1 hora
+            const expirationTime = new Date().getTime() + 24 * 60 * 60 * 1000 // 1 día en milisegundos
 
             // Almacena el tiempo de expiración en el almacenamiento local
             localStorage.setItem('expirationTime', expirationTime);
