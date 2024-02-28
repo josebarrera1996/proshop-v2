@@ -7,7 +7,7 @@ import { apiSlice } from './apiSlice';
 export const productsApiSlice = apiSlice.injectEndpoints({
     // Define los endpoints utilizando un builder que proporciona métodos para definir queries y mutations
     endpoints: (builder) => ({
-        // Define una query llamada getProducts
+        // Define el endpoint 'getProducts' para obtener los productos
         getProducts: builder.query({
             // La función query especifica la URL final para obtener los productos
             query: () => ({
@@ -16,7 +16,7 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             // Especifica cuánto tiempo (en minutos) los datos no utilizados se mantendrán en el caché
             keepUnusedDataFor: 5,
         }),
-        // Define una query llamada getProductDetails
+        // Define el endpoint 'getProductDetails' para obtener los detalles de un producto (por su ID)
         getProductDetails: builder.query({
             // La función query toma un productId y especifica la URL para obtener los detalles de un producto específico
             query: (productId) => ({
@@ -25,13 +25,22 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             // También mantiene los datos no utilizados en el caché durante 5 minutos
             keepUnusedDataFor: 5,
         }),
+        // Define un endpoint 'createProduct' para poder crear un nuevo producto
+        createProduct: builder.mutation({
+            // Define la consulta (query) para el punto final
+            query: () => ({
+                // Configuración de la solicitud: URL, método y cuerpo de la solicitud
+                url: `${PRODUCTS_URL}`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['Product'],
+        }),
     }),
 });
 
 // Exporta hooks generados automáticamente para las queries definidas
 export const {
-    // Hook para la query getProducts, que se utilizará en los componentes para obtener los productos
     useGetProductsQuery,
-    // Hook para la query getProductDetails, que se utilizará para obtener detalles de un producto específico
-    useGetProductDetailsQuery
+    useGetProductDetailsQuery,
+    useCreateProductMutation
 } = productsApiSlice;

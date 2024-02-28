@@ -3,12 +3,30 @@ import { Table, Button, Row, Col } from 'react-bootstrap';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
-import { useGetProductsQuery } from '../../slices/productsApiSlice';
+import { useGetProductsQuery, useCreateProductMutation } from '../../slices/productsApiSlice';
 
 // Componente para listar los productos
 const ProductListScreen = () => {
     // Utilizar el hook 'useGetProductsQuery' para obtener la lista de productos
     const { data: products, isLoading, error, refetch } = useGetProductsQuery();
+
+    // Utilizar este hook para poder crear un nuevo producto
+    const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation();
+
+    // Manejador para poder crear un nuevo producto
+    const createProductHandler = async () => {
+        // Verificar si realmente vamos a querer crear un nuevo producto
+        if (window.confirm('Are you sure you want to create a new product?')) {
+            try {
+                // Llamando al método
+                await createProduct();
+                // Listar nuevamente los productos
+                refetch();
+            } catch (err) {
+                toast.error(err?.data?.message || err.error);
+            }
+        }
+    };
 
     // Manejador de eventos para la eliminación de un producto (por implementar)
     const deleteHandler = () => {
@@ -22,12 +40,13 @@ const ProductListScreen = () => {
                     <h1>Products</h1>
                 </Col>
                 <Col className='text-end'>
-                    <Button className='btn-sm m-3'>
+                    <Button className='my-3' onClick={createProductHandler}>
                         <FaPlus /> Create Product
                     </Button>
                 </Col>
             </Row>
-
+            {/* Renderizar el loader mientras se este creando el producto */}
+            {loadingCreate && <Loader />}
             {/* Renderizar loader, mensaje de error o tabla de productos según el estado */}
             {isLoading ? (
                 <Loader />
