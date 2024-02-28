@@ -32,6 +32,7 @@ import ProfileScreen from './screens/ProfileScreen'; // Pantalla para poder ver 
 /* Rutas privadas (solo para usuarios logeados) y con acceso solo para los admins */
 import AdminRoute from './components/AdminRoute';
 import OrderListScreen from './screens/admin/OrderListScreen'; // Pantalla para poder ver los pedidos
+import ProductListScreen from './screens/admin/ProductListScreen'; // Pantalla para poder ver los productos
 
 // Creamos un enrutador con rutas a partir de elementos React:
 const router = createBrowserRouter(
@@ -62,6 +63,7 @@ const router = createBrowserRouter(
       {/* Rutas privadas (para usuarios logeados y que sean 'admin') */}
       <Route path='' element={<AdminRoute />}>
         <Route path='/admin/orderlist' element={<OrderListScreen />} />
+        <Route path='/admin/productlist' element={<ProductListScreen />} />
       </Route>
     </Route>
   )
