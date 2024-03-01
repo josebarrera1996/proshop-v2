@@ -33,6 +33,7 @@ import ProfileScreen from './screens/ProfileScreen'; // Pantalla para poder ver 
 import AdminRoute from './components/AdminRoute';
 import OrderListScreen from './screens/admin/OrderListScreen'; // Pantalla para poder ver los pedidos
 import ProductListScreen from './screens/admin/ProductListScreen'; // Pantalla para poder ver los productos
+import ProductEditScreen from './screens/admin/ProductEditScreen'; // Pantalla para poder actualizar un producto
 
 // Creamos un enrutador con rutas a partir de elementos React:
 const router = createBrowserRouter(
@@ -64,6 +65,7 @@ const router = createBrowserRouter(
       <Route path='' element={<AdminRoute />}>
         <Route path='/admin/orderlist' element={<OrderListScreen />} />
         <Route path='/admin/productlist' element={<ProductListScreen />} />
+        <Route path='/admin/product/:id/edit' element={<ProductEditScreen />} />
       </Route>
     </Route>
   )

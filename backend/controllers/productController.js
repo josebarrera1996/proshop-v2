@@ -51,5 +51,37 @@ const createProduct = asyncHandler(async (req, res) => {
     res.status(201).json(createdProduct);
 });
 
+// @desc    Actualizar un producto
+// @route   PUT /api/products/:id
+// @access  Private/Admin
+// Envuelve el controlador asíncrono con asyncHandler para un manejo de errores adecuado
+const updateProduct = asyncHandler(async (req, res) => {
+    // Extraer datos del cuerpo de la solicitud
+    const { name, price, description, image, brand, category, countInStock } = req.body;
+
+    // Buscar el producto por su ID
+    const product = await Product.findById(req.params.id);
+
+    // Verificar si el producto existe
+    if (product) {
+        // Actualizar los campos del producto con los nuevos valores
+        product.name = name;
+        product.price = price;
+        product.description = description;
+        product.image = image;
+        product.brand = brand;
+        product.category = category;
+        product.countInStock = countInStock;
+
+        // Guardar el producto actualizado en la base de datos
+        const updatedProduct = await product.save();
+        res.json(updatedProduct);
+    } else {
+        // Responder con un código 404 si el producto no se encuentra
+        res.status(404);
+        throw new Error('Product not found');
+    }
+});
+
 // Exportando los métodos
-export { getProducts, getProductById, createProduct };
+export { getProducts, getProductById, createProduct, updateProduct };

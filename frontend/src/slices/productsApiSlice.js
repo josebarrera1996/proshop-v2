@@ -13,6 +13,8 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             query: () => ({
                 url: PRODUCTS_URL,
             }),
+            // Etiquetas proporcionadas para la invalidación del caché
+            providesTags: ['Products'],
             // Especifica cuánto tiempo (en minutos) los datos no utilizados se mantendrán en el caché
             keepUnusedDataFor: 5,
         }),
@@ -33,7 +35,20 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 url: `${PRODUCTS_URL}`,
                 method: 'POST',
             }),
+            // Etiqueta usada para la invalidación del caché después de la creación exitosa de un nuevo producto
             invalidatesTags: ['Product'],
+        }),
+        // Define un 'endpoint' para poder actualizar un producto existente
+        updateProduct: builder.mutation({
+            // Define la consulta (query) para el punto final
+            query: (data) => ({
+                // Configuración de la solicitud: URL, método y cuerpo de la solicitud
+                url: `${PRODUCTS_URL}/${data.productId}`,
+                method: 'PUT',
+                body: data,
+            }),
+            // Etiqueta usada para la invalidación del caché después de la actualización exitosa de un producto
+            invalidatesTags: ['Products'],
         }),
     }),
 });
@@ -42,5 +57,6 @@ export const productsApiSlice = apiSlice.injectEndpoints({
 export const {
     useGetProductsQuery,
     useGetProductDetailsQuery,
-    useCreateProductMutation
+    useCreateProductMutation,
+    useUpdateProductMutation
 } = productsApiSlice;
