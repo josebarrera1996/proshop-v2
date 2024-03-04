@@ -1,5 +1,5 @@
 // Importamos la constante PRODUCTS_URL desde nuestros valores constantes definidos previamente
-import { PRODUCTS_URL } from '../constants';
+import { PRODUCTS_URL, UPLOADS_URL } from '../constants';
 // Importamos apiSlice, que ya tiene configurado nuestro estado y lógica de API
 import { apiSlice } from './apiSlice';
 
@@ -50,6 +50,16 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             // Etiqueta usada para la invalidación del caché después de la actualización exitosa de un producto
             invalidatesTags: ['Products'],
         }),
+        // Define un 'endpoint' para poder subir la imagen de un producto
+        uploadProductImage: builder.mutation({
+            // Define la consulta (query) para el punto final
+            query: (data) => ({
+                // Configuración de la solicitud: URL, método y cuerpo de la solicitud
+                url: `${UPLOADS_URL}`,
+                method: 'POST',
+                body: data,
+            }),
+        }),
     }),
 });
 
@@ -58,5 +68,6 @@ export const {
     useGetProductsQuery,
     useGetProductDetailsQuery,
     useCreateProductMutation,
-    useUpdateProductMutation
+    useUpdateProductMutation,
+    useUploadProductImageMutation
 } = productsApiSlice;
