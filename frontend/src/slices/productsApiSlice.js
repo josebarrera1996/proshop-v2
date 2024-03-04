@@ -60,6 +60,17 @@ export const productsApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
+        // Define un 'endpoint' para poder eliminar un producto
+        deleteProduct: builder.mutation({
+            // Define la consulta (query) para el punto final
+            query: (productId) => ({
+                // Configuración de la solicitud: URL y método
+                url: `${PRODUCTS_URL}/${productId}`,
+                method: 'DELETE',
+            }),
+            // Etiqueta usada para la invalidación del caché después de la eliminación exitosa de un producto
+            providesTags: ['Product'],
+        }),
     }),
 });
 
@@ -69,5 +80,6 @@ export const {
     useGetProductDetailsQuery,
     useCreateProductMutation,
     useUpdateProductMutation,
-    useUploadProductImageMutation
+    useUploadProductImageMutation,
+    useDeleteProductMutation
 } = productsApiSlice;

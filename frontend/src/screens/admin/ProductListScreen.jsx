@@ -3,7 +3,11 @@ import { Table, Button, Row, Col } from 'react-bootstrap';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
-import { useGetProductsQuery, useCreateProductMutation } from '../../slices/productsApiSlice';
+import {
+    useGetProductsQuery,
+    useCreateProductMutation,
+    useDeleteProductMutation
+} from '../../slices/productsApiSlice';
 
 // Componente para listar los productos
 const ProductListScreen = () => {
@@ -12,6 +16,9 @@ const ProductListScreen = () => {
 
     // Utilizar este hook para poder crear un nuevo producto
     const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation();
+
+    // Utilizar este hook para poder eliminar un producto
+    const [deleteProduct, { isLoading: loadingDelete }] = useDeleteProductMutation();
 
     // Manejador para poder crear un nuevo producto
     const createProductHandler = async () => {
@@ -29,8 +36,20 @@ const ProductListScreen = () => {
     };
 
     // Manejador de eventos para la eliminación de un producto (por implementar)
-    const deleteHandler = () => {
-        console.log('delete');
+    const deleteHandler = async (id) => {
+        // Mostrar un cuadro de confirmación al usuario
+        if (window.confirm('Are you sure')) {
+            try {
+                // Llamar a la función de eliminación de producto con el ID correspondiente
+                await deleteProduct(id);
+
+                // Refrescar los datos después de la eliminación exitosa
+                refetch();
+            } catch (err) {
+                // Manejar errores y mostrar un mensaje de error al usuario
+                toast.error(err?.data?.message || err.error);
+            }
+        }
     };
 
     return (
@@ -45,8 +64,9 @@ const ProductListScreen = () => {
                     </Button>
                 </Col>
             </Row>
-            {/* Renderizar el loader mientras se este creando el producto */}
+            {/* Renderizar el loader mientras se este creando o eliminando el producto */}
             {loadingCreate && <Loader />}
+            {loadingDelete && <Loader />}
             {/* Renderizar loader, mensaje de error o tabla de productos según el estado */}
             {isLoading ? (
                 <Loader />

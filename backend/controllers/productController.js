@@ -83,5 +83,31 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Eliminar un producto
+// @route   DELETE /api/products/:id
+// @access  Private/Admin
+// Envuelve el controlador asíncrono con asyncHandler para un manejo de errores adecuado
+const deleteProduct = asyncHandler(async (req, res) => {
+    // Buscar el producto por su ID en la base de datos
+    const product = await Product.findById(req.params.id);
+
+    // Verificar si el producto existe
+    if (product) {
+        // Eliminar el producto utilizando su ID
+        await Product.deleteOne({ _id: product._id });
+        res.json({ message: 'Product removed' });
+    } else {
+        // Responder con un código de estado 404 y lanzar un error si el producto no se encuentra
+        res.status(404);
+        throw new Error('Product not found');
+    }
+});
+
 // Exportando los métodos
-export { getProducts, getProductById, createProduct, updateProduct };
+export {
+    getProducts,
+    getProductById,
+    createProduct,
+    updateProduct,
+    deleteProduct,
+};
