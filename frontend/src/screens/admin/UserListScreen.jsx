@@ -2,22 +2,44 @@ import React from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Button } from 'react-bootstrap';
 import { FaTrash, FaEdit, FaCheck, FaTimes } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
-import { useGetUsersQuery } from '../../slices/usersApiSlice';
+import {
+    useDeleteUserMutation,
+    useGetUsersQuery,
+} from '../../slices/usersApiSlice';
 
 const UserListScreen = () => {
     // Obtener datos de usuarios, estado de carga y errores mediante el hook personalizado
     const { data: users, refetch, isLoading, error } = useGetUsersQuery();
 
+    // Hook personalizado para eliminar un usuario
+    const [deleteUser, { isLoading: loadingDelete }] = useDeleteUserMutation();
+
     // Manejador para eliminar un usuario
     const deleteHandler = async (id) => {
-        console.log('delete');
+        if (window.confirm('Are you sure')) {
+            try {
+                // Intenta eliminar el usuario llamando a la función deleteUser con el ID del usuario
+                await deleteUser(id);
+
+                // Vuelve a cargar los datos después de la eliminación exitosa
+                refetch();
+                // Mensaje de éxito
+                toast.success('User deleted');
+            } catch (err) {
+                // En caso de error, muestra un mensaje de error utilizando toast
+                toast.error(err?.data?.message || err.error);
+            }
+        }
     };
 
     return (
         <>
             <h1>Users</h1>
+            {/* Mostrar el Loader cuando se esté eliminando un usuario */}
+            {loadingDelete && <Loader />}
             {/* Condición de carga: muestra un indicador de carga si los datos están cargando */}
             {isLoading ? (
                 <Loader />

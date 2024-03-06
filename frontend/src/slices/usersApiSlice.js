@@ -54,6 +54,15 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             // Especifica cuánto tiempo (en minutos) los datos no utilizados se mantendrán en el caché
             keepUnusedDataFor: 5,
         }),
+        // Define un 'endpoint' llamado 'getUsers' para poder eliminar un usuario
+        deleteUser: builder.mutation({
+            // Define la consulta (query) para el 'endpoint'
+            query: (userId) => ({
+                 // Configuración de la solicitud: URL y el método
+                url: `${USERS_URL}/${userId}`,
+                method: 'DELETE',
+            }),
+        }),
     }),
 });
 
@@ -64,4 +73,5 @@ export const {
     useRegisterMutation,
     useProfileMutation,
     useGetUsersQuery,
+    useDeleteUserMutation,
 } = usersApiSlice;
