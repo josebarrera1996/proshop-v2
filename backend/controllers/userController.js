@@ -152,28 +152,85 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
-    res.send('get users');
+    const users = await User.find({});
+    res.json(users);
 });
 
 // @desc    Eliminar usuario
 // @route   DELETE /api/users/:id
 // @access  Private/Admin
 const deleteUser = asyncHandler(async (req, res) => {
-    res.send('delete user');
+    // Buscar el usuario por ID
+    const user = await User.findById(req.params.id);
+
+    // Verificar si el usuario existe
+    if (user) {
+        // Verificar si el usuario a eliminar es un administrador
+        if (user.isAdmin) {
+            // Enviar un error 400 si se intenta eliminar un administrador
+            res.status(400);
+            throw new Error('Can not delete admin user');
+        }
+
+        // Eliminar el usuario de la base de datos
+        await User.deleteOne({ _id: user._id });
+
+        // Enviar una respuesta JSON indicando que el usuario ha sido eliminado
+        res.json({ message: 'User removed' });
+    } else {
+        // Enviar un error 404 si el usuario no se encuentra
+        res.status(404);
+        throw new Error('User not found');
+    }
 });
 
 // @desc    Obtener usuario por ID
 // @route   GET /api/users/:id
 // @access  Private/Admin
 const getUserById = asyncHandler(async (req, res) => {
-    res.send('get user by id');
+    // Buscar el usuario por ID excluyendo la contraseña de la selección
+    const user = await User.findById(req.params.id).select('-password');
+
+    // Verificar si el usuario existe
+    if (user) {
+        // Enviar una respuesta JSON con la información del usuario (excluyendo la contraseña)
+        res.json(user);
+    } else {
+        // Enviar un error 404 si el usuario no se encuentra
+        res.status(404);
+        throw new Error('User not found');
+    }
 });
 
 // @desc    Actualizar usuario
 // @route   PUT /api/users/:id
 // @access  Private/Admin
 const updateUser = asyncHandler(async (req, res) => {
-    res.send('update user');
+    // Buscar el usuario por ID
+    const user = await User.findById(req.params.id);
+
+    // Verificar si el usuario existe
+    if (user) {
+        // Actualizar los campos del usuario con los valores proporcionados en la solicitud
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+        user.isAdmin = Boolean(req.body.isAdmin);
+
+        // Guardar la información actualizada del usuario
+        const updatedUser = await user.save();
+
+        // Enviar una respuesta JSON con la información actualizada del usuario
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin,
+        });
+    } else {
+        // Enviar un error 404 si el usuario no se encuentra
+        res.status(404);
+        throw new Error('User not found');
+    }
 });
 
 // Exportando los métodos
