@@ -4,9 +4,9 @@ import { USERS_URL } from '../constants';
 // Crea un slice específico para la API de usuario mediante la inyección de puntos finales
 export const usersApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        // Define un punto final 'login' para la autenticación del usuario
+        // Define un 'endpoint' llamado 'login' para la autenticación del usuario
         login: builder.mutation({
-            // Define la consulta (query) para el punto final
+            // Define la consulta (query) para el 'endpoint'
             query: (data) => ({
                 // Configuración de la solicitud: URL, método y cuerpo de la solicitud
                 url: `${USERS_URL}/auth`, // Construye la URL completa para la autenticación
@@ -14,9 +14,9 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
-        // Define un punto final 'register' para la registración de un nuevo usuario
+        // Define un 'endpoint' llamado 'register' para la registración de un nuevo usuario
         register: builder.mutation({
-            // Define la consulta (query) para el punto final
+            // Define la consulta (query) para el 'endpoint'
             query: (data) => ({
                 // Configuración de la solicitud: URL, método y cuerpo de la solicitud
                 url: `${USERS_URL}`, // Construye la URL completa para la autenticación
@@ -24,24 +24,35 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 body: data,
             }),
         }),
-        // Define un punto final 'logout' para el deslogeo
+        // Define un 'endpoint' llamado 'logout' para el deslogeo
         logout: builder.mutation({
-            // Define la consulta (query) para el punto final
+            // Define la consulta (query) para el 'endpoint'
             query: () => ({
                 // Configuración de la solicitud: URL y método
                 url: `${USERS_URL}/logout`,
                 method: 'POST',
             }),
         }),
-        // Define un punto final 'profile' para actualizar los datos del usuario logeado
+        // Define un 'endpoint' llamado 'profile' para actualizar los datos del usuario logeado
         profile: builder.mutation({
-            // Define la consulta (query) para el punto final
+            // Define la consulta (query) para el 'endpoint'
             query: (data) => ({
                 // Configuración de la solicitud: URL, método y cuerpo de la solicitud
                 url: `${USERS_URL}/profile`,
                 method: 'PUT',
                 body: data,
             }),
+        }),
+        // Define un 'endpoint' llamado 'getUsers' para poder obtener todos los usuarios
+        getUsers: builder.query({
+            // Define la consulta (query) para el 'endpoint'
+            query: () => ({
+                url: USERS_URL,
+            }),
+            // Etiquetas proporcionadas para la invalidación del caché
+            providesTags: ['Users'],
+            // Especifica cuánto tiempo (en minutos) los datos no utilizados se mantendrán en el caché
+            keepUnusedDataFor: 5,
         }),
     }),
 });
@@ -51,5 +62,6 @@ export const {
     useLoginMutation,
     useLogoutMutation,
     useRegisterMutation,
-    useProfileMutation
+    useProfileMutation,
+    useGetUsersQuery,
 } = usersApiSlice;
