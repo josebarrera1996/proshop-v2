@@ -35,6 +35,7 @@ import OrderListScreen from './screens/admin/OrderListScreen'; // Pantalla para 
 import ProductListScreen from './screens/admin/ProductListScreen'; // Pantalla para poder ver los productos
 import ProductEditScreen from './screens/admin/ProductEditScreen'; // Pantalla para poder actualizar un producto
 import UserListScreen from './screens/admin/UserListScreen'; // Pantalla para poder ver los usuarios
+import UserEditScreen from './screens/admin/UserEditScreen'; // Pantalla para poder ver actualizar un usuario
 
 // Creamos un enrutador con rutas a partir de elementos React:
 const router = createBrowserRouter(
@@ -68,6 +69,7 @@ const router = createBrowserRouter(
         <Route path='/admin/productlist' element={<ProductListScreen />} />
         <Route path='/admin/product/:id/edit' element={<ProductEditScreen />} />
         <Route path='/admin/userlist' element={<UserListScreen />} />
+        <Route path='/admin/user/:id/edit' element={<UserEditScreen />} />
       </Route>
     </Route>
   )

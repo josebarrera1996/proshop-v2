@@ -58,10 +58,32 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         deleteUser: builder.mutation({
             // Define la consulta (query) para el 'endpoint'
             query: (userId) => ({
-                 // Configuración de la solicitud: URL y el método
+                // Configuración de la solicitud: URL y el método
                 url: `${USERS_URL}/${userId}`,
                 method: 'DELETE',
             }),
+        }),
+        // Define un 'endpoint' llamado 'getUserDetails' para poder obtener los datos de un usuario
+        getUserDetails: builder.query({
+            // Define la consulta (query) para el 'endpoint'
+            query: (id) => ({
+                // Configuración de la solicitud: URL y el método
+                url: `${USERS_URL}/${id}`,
+            }),
+            // Especifica cuánto tiempo (en minutos) los datos no utilizados se mantendrán en el caché
+            keepUnusedDataFor: 5,
+        }),
+        // Define un 'endpoint' llamado 'updateUser' para poder actualizar un usuario
+        updateUser: builder.mutation({
+            // Define la consulta (query) para el 'endpoint'
+            query: (data) => ({
+                // Configuración de la solicitud: URL, método y cuerpo de la solicitud
+                url: `${USERS_URL}/${data.userId}`,
+                method: 'PUT',
+                body: data,
+            }),
+            // Etiqueta usada para la invalidación del caché después de la actualización exitosa de un usuario
+            invalidatesTags: ['Users'],
         }),
     }),
 });
@@ -74,4 +96,6 @@ export const {
     useProfileMutation,
     useGetUsersQuery,
     useDeleteUserMutation,
+    useGetUserDetailsQuery,
+    useUpdateUserMutation
 } = usersApiSlice;
