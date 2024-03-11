@@ -103,6 +103,61 @@ const deleteProduct = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Crear una nueva reseña
+// @route   POST /api/products/:id/reviews
+// @access  Private
+// Envuelve el controlador asíncrono con asyncHandler para un manejo de errores adecuado
+const createProductReview = asyncHandler(async (req, res) => {
+    // Extrae la calificación y el comentario del cuerpo de la solicitud
+    const { rating, comment } = req.body;
+
+    // Encuentra el producto por su ID
+    const product = await Product.findById(req.params.id);
+
+    // Verifica si el producto existe
+    if (product) {
+        // Verifica si el usuario ya revisó el producto
+        const alreadyReviewed = product.reviews.find(
+            (r) => r.user.toString() === req.user._id.toString()
+        );
+
+        // Si el usuario ya revisó el producto, devuelve un error
+        if (alreadyReviewed) {
+            res.status(400);
+            throw new Error('Product already reviewed');
+        }
+
+        // Crea un objeto de reseña con los detalles proporcionados por el usuario
+        const review = {
+            name: req.user.name,
+            rating: Number(rating),
+            comment,
+            user: req.user._id,
+        };
+
+        // Agrega la nueva reseña al array de reseñas del producto
+        product.reviews.push(review);
+
+        // Actualiza el número total de reseñas del producto
+        product.numReviews = product.reviews.length;
+
+        // Calcula la nueva calificación promedio del producto
+        product.rating =
+            product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+            product.reviews.length;
+
+        // Guarda los cambios en el producto
+        await product.save();
+
+        // Devuelve una respuesta de éxito con un mensaje
+        res.status(201).json({ message: 'Review added' });
+    } else {
+        // Si el producto no se encuentra, devuelve un error 404
+        res.status(404);
+        throw new Error('Product not found');
+    }
+});
+
 // Exportando los métodos
 export {
     getProducts,
@@ -110,4 +165,5 @@ export {
     createProduct,
     updateProduct,
     deleteProduct,
+    createProductReview
 };

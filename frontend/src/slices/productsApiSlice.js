@@ -71,6 +71,18 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             // Etiqueta usada para la invalidación del caché después de la eliminación exitosa de un producto
             providesTags: ['Product'],
         }),
+        // Define un 'endpoint' para poder dejar una 'review'
+        createReview: builder.mutation({
+            // Define la consulta (query) para el punto final
+            query: (data) => ({
+                // Configuración de la solicitud: URL, método y cuerpo de la solicitud
+                url: `${PRODUCTS_URL}/${data.productId}/reviews`,
+                method: 'POST',
+                body: data,
+            }),
+            // Especifica las etiquetas de caché que deben invalidarse después de realizar esta mutación
+            invalidatesTags: ['Product'],
+        }),
     }),
 });
 
@@ -81,5 +93,6 @@ export const {
     useCreateProductMutation,
     useUpdateProductMutation,
     useUploadProductImageMutation,
-    useDeleteProductMutation
+    useDeleteProductMutation,
+    useCreateReviewMutation
 } = productsApiSlice;
