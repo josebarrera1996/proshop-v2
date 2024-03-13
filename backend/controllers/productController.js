@@ -7,10 +7,22 @@ import Product from '../models/productModel.js';
 // @access  Público
 // Envuelve el controlador asíncrono con asyncHandler para un manejo de errores adecuado
 const getProducts = asyncHandler(async (req, res) => {
-    // Consulta a la base de datos para obtener todos los productos
-    const products = await Product.find({});
-    // Envía los productos como respuesta en formato JSON
-    res.json(products);
+    // Número de productos por página
+    const pageSize = 4;
+
+    // Página actual, se obtiene del parámetro de consulta 'pageNumber', o por defecto es 1
+    const page = Number(req.query.pageNumber) || 1;
+
+    // Conteo total de productos en la base de datos
+    const count = await Product.countDocuments();
+
+    // Obtener productos limitados por pageSize y saltar productos según la página actual
+    const products = await Product.find()
+        .limit(pageSize)
+        .skip(pageSize * (page - 1));
+
+    // Responder con un objeto JSON que incluye los productos, la página actual y el total de páginas
+    res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
 // @desc    Traer solo un producto (por su ID)

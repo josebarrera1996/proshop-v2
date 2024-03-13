@@ -44,6 +44,7 @@ const router = createBrowserRouter(
     <Route path="/" element={<App />}>
       {/* Ruta anidada para "/", renderiza la pantalla de inicio: */}
       <Route index={true} path="/" element={<HomeScreen />} />
+      <Route path='/page/:pageNumber' element={<HomeScreen />} />
       {/* Ruta para poder acceder a los detalles del producto */}
       <Route path='/product/:id' element={<ProductScreen />} />
       {/* Ruta para poder acceder a los detalles del carrito */}
@@ -67,6 +68,7 @@ const router = createBrowserRouter(
       <Route path='' element={<AdminRoute />}>
         <Route path='/admin/orderlist' element={<OrderListScreen />} />
         <Route path='/admin/productlist' element={<ProductListScreen />} />
+        <Route path='/admin/productlist/:pageNumber' element={<ProductListScreen />} />
         <Route path='/admin/product/:id/edit' element={<ProductEditScreen />} />
         <Route path='/admin/userlist' element={<UserListScreen />} />
         <Route path='/admin/user/:id/edit' element={<UserEditScreen />} />

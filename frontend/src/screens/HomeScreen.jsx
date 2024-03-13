@@ -1,15 +1,19 @@
-// Importamos el hook personalizado useGetProductsQuery de nuestro slice de producto
-import { useGetProductsQuery } from '../slices/productsApiSlice';
 import { Row, Col } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+import { useGetProductsQuery } from '../slices/productsApiSlice';
 import Product from '../components/Product';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
+import Paginate from '../components/Paginate';
 
 // Componente funcional HomeScreen
 const HomeScreen = () => {
-    // Utilizamos el hook useGetProductsQuery para obtener datos, estado de carga y errores
+    // Obtenemos el número de página
+    const { pageNumber } = useParams();
+
+    // Utilizamos el hook para obtener todos los productos, estado de carga y errores
     // de nuestra API de productos
-    const { data: products, isLoading, error } = useGetProductsQuery();
+    const { data, isLoading, error } = useGetProductsQuery({ pageNumber });
 
     // Renderización del componente
     return (
@@ -30,7 +34,7 @@ const HomeScreen = () => {
                     <h1>Latest Products</h1>
                     <Row>
                         {/* Mapeamos los productos a componentes Product, cada uno en una columna */}
-                        {products.map((product) => (
+                        {data.products.map((product) => (
                             // La propiedad 'key' es necesaria cuando se hace un map en React
                             <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
                                 {/* Componente Product que muestra cada producto */}
@@ -38,6 +42,8 @@ const HomeScreen = () => {
                             </Col>
                         ))}
                     </Row>
+                    {/* Paginador */}
+                    <Paginate pages={data.pages} page={data.page} />
                 </>
             )}
         </>

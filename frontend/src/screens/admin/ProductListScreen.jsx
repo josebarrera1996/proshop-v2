@@ -1,8 +1,10 @@
 import { LinkContainer } from 'react-router-bootstrap';
 import { Table, Button, Row, Col } from 'react-bootstrap';
 import { FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader';
+import Paginate from '../../components/Paginate';
 import {
     useGetProductsQuery,
     useCreateProductMutation,
@@ -11,8 +13,11 @@ import {
 
 // Componente para listar los productos
 const ProductListScreen = () => {
+    // Obtenemos el número de página
+    const { pageNumber } = useParams();
+
     // Utilizar el hook 'useGetProductsQuery' para obtener la lista de productos
-    const { data: products, isLoading, error, refetch } = useGetProductsQuery();
+    const { data, isLoading, error, refetch } = useGetProductsQuery({ pageNumber });
 
     // Utilizar este hook para poder crear un nuevo producto
     const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation();
@@ -88,7 +93,7 @@ const ProductListScreen = () => {
                         </thead>
                         <tbody>
                             {/* Mapear cada producto en una fila de la tabla */}
-                            {products.map((product) => (
+                            {data.products.map((product) => (
                                 <tr key={product._id}>
                                     <td>{product._id}</td>
                                     <td>{product.name}</td>
@@ -114,7 +119,8 @@ const ProductListScreen = () => {
                             ))}
                         </tbody>
                     </Table>
-                    {/* Marcador de posición para la paginación (por implementar) */}
+                    {/* Paginador */}
+                    <Paginate pages={data.pages} page={data.page} isAdmin={true} />
                 </>
             )}
         </>

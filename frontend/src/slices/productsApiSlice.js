@@ -9,9 +9,10 @@ export const productsApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         // Define el endpoint 'getProducts' para obtener los productos
         getProducts: builder.query({
-            // La función query especifica la URL final para obtener los productos
-            query: () => ({
+            // La función query especifica la URL y el parámetro con el nº de la página para poder obtener los productos
+            query: ({ pageNumber }) => ({
                 url: PRODUCTS_URL,
+                params: { pageNumber },
             }),
             // Etiquetas proporcionadas para la invalidación del caché
             providesTags: ['Products'],
