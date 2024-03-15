@@ -9,6 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
+// Búsqueda
+import SearchBox from './SearchBox';
 // Importando el Logo de la app
 import Logo from '../assets/logo.png';
 
@@ -65,6 +67,8 @@ const Header = () => {
                     <Navbar.Collapse id='basic-navbar-nav'>
                         {/* Navegación de la Navbar, alineada al final con la clase ms-auto */}
                         <Nav className='ms-auto'>
+                            {/* Campo de búsqueda */}
+                            <SearchBox />
                             {/* Enlace de la Navbar con ícono de carrito de compras, lleva a la página del carrito */}
                             <LinkContainer to='/cart'>
                                 <Nav.Link>

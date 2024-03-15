@@ -44,7 +44,9 @@ const router = createBrowserRouter(
     <Route path="/" element={<App />}>
       {/* Ruta anidada para "/", renderiza la pantalla de inicio: */}
       <Route index={true} path="/" element={<HomeScreen />} />
+      <Route path='/search/:keyword' element={<HomeScreen />} />
       <Route path='/page/:pageNumber' element={<HomeScreen />} />
+      <Route path='/search/:keyword/page/:pageNumber' element={<HomeScreen />} />
       {/* Ruta para poder acceder a los detalles del producto */}
       <Route path='/product/:id' element={<ProductScreen />} />
       {/* Ruta para poder acceder a los detalles del carrito */}

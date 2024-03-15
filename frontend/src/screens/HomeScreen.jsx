@@ -1,5 +1,5 @@
 import { Row, Col } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useGetProductsQuery } from '../slices/productsApiSlice';
 import Product from '../components/Product';
 import Loader from '../components/Loader';
@@ -9,16 +9,20 @@ import Paginate from '../components/Paginate';
 // Componente funcional HomeScreen
 const HomeScreen = () => {
     // Obtenemos el número de página
-    const { pageNumber } = useParams();
+    const { pageNumber, keyword } = useParams();
 
     // Utilizamos el hook para obtener todos los productos, estado de carga y errores
     // de nuestra API de productos
-    const { data, isLoading, error } = useGetProductsQuery({ pageNumber });
+    const { data, isLoading, error } = useGetProductsQuery({ pageNumber, keyword });
 
     // Renderización del componente
     return (
         // Utilizamos fragmentos para agrupar múltiples elementos
         <>
+            {/* Si hemos realizado una búsqueda, brindar la posibilidad de volver hacia atrás */}
+            {keyword && (
+                <Link to='/' className='btn btn-light mb-4'>Go Back</Link>
+            )}
             {/* Mostramos el Spinner 'Loader' si los datos aún están cargándose */}
             {isLoading ? (
                 <Loader />
@@ -43,7 +47,11 @@ const HomeScreen = () => {
                         ))}
                     </Row>
                     {/* Paginador */}
-                    <Paginate pages={data.pages} page={data.page} />
+                    <Paginate
+                        pages={data.pages}
+                        page={data.page}
+                        keyword={keyword ? keyword : ''}
+                    />
                 </>
             )}
         </>

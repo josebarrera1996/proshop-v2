@@ -7,21 +7,30 @@ import Product from '../models/productModel.js';
 // @access  Público
 // Envuelve el controlador asíncrono con asyncHandler para un manejo de errores adecuado
 const getProducts = asyncHandler(async (req, res) => {
-    // Número de productos por página
-    const pageSize = 4;
-
-    // Página actual, se obtiene del parámetro de consulta 'pageNumber', o por defecto es 1
+    // Tamaño de la página y página actual obtenidos de la consulta o establecidos por defecto
+    const pageSize = 4; // con el valor '1' apreciarás la búsqueda con paginación (por ej, con 'phone' -> search/phone/page/1)
     const page = Number(req.query.pageNumber) || 1;
 
-    // Conteo total de productos en la base de datos
-    const count = await Product.countDocuments();
+    // Condicional para construir la búsqueda por palabra clave
+    const keyword = req.query.keyword
+        ? {
+            name: {
+                // Expresión regular para buscar la palabra clave, opción 'i' para insensibilidad a mayúsculas y minúsculas
+                $regex: req.query.keyword,
+                $options: 'i',
+            },
+        }
+        : {};
 
-    // Obtener productos limitados por pageSize y saltar productos según la página actual
-    const products = await Product.find()
+    // Obtiene el número total de productos que coinciden con la búsqueda
+    const count = await Product.countDocuments({ ...keyword });
+
+    // Obtiene los productos que coinciden con la búsqueda, con paginación
+    const products = await Product.find({ ...keyword })
         .limit(pageSize)
         .skip(pageSize * (page - 1));
 
-    // Responder con un objeto JSON que incluye los productos, la página actual y el total de páginas
+    // Envia una respuesta JSON con los productos, la página actual y el número total de páginas
     res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
 
