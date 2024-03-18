@@ -6,6 +6,7 @@ import {
   Route,
   RouterProvider,
 } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
@@ -85,14 +86,17 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 // Renderizamos la aplicación en modo estricto (para detectar errores):
 root.render(
   <React.StrictMode>
-    {/* Implementando Redux en toda la app */}
-    <Provider store={store}>
-      {/* Implementando el proveedor de PayPal */}
-      <PayPalScriptProvider deferLoading={true}>
-        {/* Proporcionamos el enrutador a la aplicación: */}
-        <RouterProvider router={router} />
-      </PayPalScriptProvider>
-    </Provider>
+    {/* Implementando Helmet en toda la app */}
+    <HelmetProvider>
+      {/* Implementando Redux en toda la app */}
+      <Provider store={store}>
+        {/* Implementando el proveedor de PayPal */}
+        <PayPalScriptProvider deferLoading={true}>
+          {/* Proporcionamos el enrutador a la aplicación: */}
+          <RouterProvider router={router} />
+        </PayPalScriptProvider>
+      </Provider>
+    </HelmetProvider>
   </React.StrictMode>
 );
 

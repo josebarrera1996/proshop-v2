@@ -6,6 +6,7 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Paginate from '../components/Paginate';
 import ProductCarousel from '../components/ProductCarousel';
+import Meta from '../components/Meta';
 
 // Componente funcional HomeScreen
 const HomeScreen = () => {
@@ -41,6 +42,7 @@ const HomeScreen = () => {
             ) : (
                 // Renderización de los productos si no hay errores y no se están cargando
                 <>
+                    <Meta />
                     <h1>Latest Products</h1>
                     <Row>
                         {/* Mapeamos los productos a componentes Product, cada uno en una columna */}
