@@ -84,6 +84,13 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             // Especifica las etiquetas de caché que deben invalidarse después de realizar esta mutación
             invalidatesTags: ['Product'],
         }),
+        // Define un 'endpoint' para poder obtener los productos con mejor rating
+        getTopProducts: builder.query({
+            // Define la consulta (query) para el punto final
+            query: () => `${PRODUCTS_URL}/top`,
+            // También mantiene los datos no utilizados en el caché durante 5 minutos
+            keepUnusedDataFor: 5,
+        }),
     }),
 });
 
@@ -95,5 +102,6 @@ export const {
     useUpdateProductMutation,
     useUploadProductImageMutation,
     useDeleteProductMutation,
-    useCreateReviewMutation
+    useCreateReviewMutation,
+    useGetTopProductsQuery
 } = productsApiSlice;

@@ -5,6 +5,7 @@ import Product from '../components/Product';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Paginate from '../components/Paginate';
+import ProductCarousel from '../components/ProductCarousel';
 
 // Componente funcional HomeScreen
 const HomeScreen = () => {
@@ -19,9 +20,14 @@ const HomeScreen = () => {
     return (
         // Utilizamos fragmentos para agrupar múltiples elementos
         <>
-            {/* Si hemos realizado una búsqueda, brindar la posibilidad de volver hacia atrás */}
-            {keyword && (
-                <Link to='/' className='btn btn-light mb-4'>Go Back</Link>
+            {/* Mostrar el carousel de productos (siempre y cuando no háyamos realizado ninguna búsqueda) */}
+            {!keyword ? (
+                <ProductCarousel />
+            ) : (
+                // Si hemos realizado una búsqueda, brindar la posibilidad de volver hacia atrás 
+                <Link to='/' className='btn btn-light'>
+                    Go Back
+                </Link>
             )}
             {/* Mostramos el Spinner 'Loader' si los datos aún están cargándose */}
             {isLoading ? (

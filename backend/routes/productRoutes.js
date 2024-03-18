@@ -5,7 +5,8 @@ import {
     createProduct,
     updateProduct,
     deleteProduct,
-    createProductReview
+    createProductReview,
+    getTopProducts
 } from '../controllers/productController.js';
 import { protect, admin } from '../middlewares/authMiddleware.js';
 
@@ -14,12 +15,13 @@ const router = express.Router();
 
 /* Definiendo las rutas */
 router.route('/').get(getProducts).post(protect, admin, createProduct);
-router.route('/:id/reviews').post(protect, createProductReview);
+router.get('/top', getTopProducts);
 router
     .route('/:id')
     .get(getProductById)
     .put(protect, admin, updateProduct)
     .delete(protect, admin, deleteProduct);
+router.route('/:id/reviews').post(protect, createProductReview);
 
 // Exportamos el enrutador para su uso en la aplicación principal de Express
 export default router;

@@ -179,6 +179,18 @@ const createProductReview = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Obtener los mejores productos con rating
+// @route   GET /api/products/top
+// @access  Public
+// Envuelve el controlador asíncrono con asyncHandler para un manejo de errores adecuado
+const getTopProducts = asyncHandler(async (req, res) => {
+    // Busca en la base de datos todos los productos y los ordena según su calificación de manera descendente,
+    // limitando la cantidad de resultados a 3 para obtener los 3 productos mejor valorados
+    const products = await Product.find({}).sort({ rating: -1 }).limit(3);
+
+    res.json(products);
+});
+
 // Exportando los métodos
 export {
     getProducts,
@@ -186,5 +198,6 @@ export {
     createProduct,
     updateProduct,
     deleteProduct,
-    createProductReview
+    createProductReview,
+    getTopProducts
 };
