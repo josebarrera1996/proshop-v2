@@ -147,7 +147,7 @@ const PlaceOrderScreen = () => {
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 {/* Muestra un mensaje de error si hay algún error en la creación del pedido */}
-                                {error && <Message variant='danger'>{error}</Message>}
+                                {error && <Message variant='danger'>{error.data.message}</Message>}
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 {/* Botón para realizar el pedido */}

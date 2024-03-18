@@ -66,6 +66,8 @@ const cartSlice = createSlice({
             // Actualiza el estado de los items del carrito (sin nada) y lo guarda en el almacenamiento local
             return updateCart(state);
         },
+        // Reducer para resetear el carrito
+        resetCart: (state) => (state = initialState)
     },
 });
 
@@ -75,7 +77,8 @@ export const {
     removeFromCart,
     saveShippingAddress,
     savePaymentMethod,
-    clearCartItems
+    clearCartItems,
+    resetCart
 } = cartSlice.actions;
 
 // Exporta el reducer del slice para su uso en la configuración del store de Redux

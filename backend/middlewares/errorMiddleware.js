@@ -14,12 +14,6 @@ const errorHandler = (err, req, res, next) => {
     let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
     let message = err.message; // Mensaje predeterminado del error
 
-    // Si el error es un error de Mongoose "CastError" típicamente debido a un ObjectId inválido
-    if (err.name === 'CastError' && err.kind === 'ObjectId') {
-        statusCode = 404; // Cambia el código de estado a 404 (No encontrado)
-        message = 'Resource not found'; // Actualiza el mensaje a uno más específico
-    }
-
     // Envía la respuesta de error en formato JSON
     res.status(statusCode).json({
         message: message, // Mensaje de error

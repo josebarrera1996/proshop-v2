@@ -131,7 +131,7 @@ const OrderScreen = () => {
         <Loader />
     ) : error ? (
         // Muestra un mensaje de error si hay un problema al cargar los detalles del pedido
-        <Message variant='danger'>{error}</Message>
+        <Message variant='danger'>{error?.data?.message || error.error}</Message>
     ) : (
         // Muestra la información del pedido si se cargó correctamente
         <>

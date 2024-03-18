@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { useLogoutMutation } from '../slices/usersApiSlice';
+import { resetCart } from '../slices/cartSlice';
 import { logout } from '../slices/authSlice';
 // Búsqueda
 import SearchBox from './SearchBox';
@@ -40,6 +41,8 @@ const Header = () => {
             await logoutApiCall().unwrap();
             // Despacha la acción para actualizar el estado de autenticación (logout)
             dispatch(logout());
+            // Despacha la acción para limpiar los estados del carrito
+            dispatch(resetCart());
             // Navega al componente de inicio de sesión después del cierre de sesión exitoso
             navigate('/login');
         } catch (err) {

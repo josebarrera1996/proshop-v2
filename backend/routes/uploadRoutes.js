@@ -13,37 +13,48 @@ const storage = multer.diskStorage({
     },
     // Generación del nombre de archivo
     filename(req, file, cb) {
-        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`); 
+        cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
     },
 });
 
-// Función para verificar el tipo de archivo permitido
-function checkFileType(file, cb) {
-    // Tipos de archivo permitidos (jpg, jpeg, png)
-    const filetypes = /jpg|jpeg|png/;
-    // Verifica la extensión y el tipo MIME del archivo
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
+// Función de filtrado de archivos aceptados
+function fileFilter(req, file, cb) {
+    // Definir los tipos de archivo permitidos mediante expresiones regulares
+    const filetypes = /jpe?g|png|webp/;
+    const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
 
-    // Llama al callback con el resultado de la verificación
+    // Verificar si la extensión del archivo cumple con los tipos permitidos
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    // Verificar si el tipo MIME del archivo cumple con los tipos permitidos
+    const mimetype = mimetypes.test(file.mimetype);
+
+    // Si tanto la extensión como el tipo MIME son válidos, llamar al callback con 'null' y 'true'
     if (extname && mimetype) {
-        return cb(null, true);
+        cb(null, true);
     } else {
-        cb({ message: 'Images only!' });
+        // Si el archivo no cumple con los criterios, llamar al callback con un error y 'false'
+        cb(new Error('Images only!'), false);
     }
 }
 
-// Configuración de Multer con la función de almacenamiento y verificación de tipo de archivo
-const upload = multer({
-    storage,
-});
+// Configuración de multer con el almacenamiento y el filtro
+const upload = multer({ storage, fileFilter });
+const uploadSingleImage = upload.single('image');
 
 // Ruta para manejar la subida de imágenes mediante POST
-router.post('/', upload.single('image'), (req, res) => {
-    // Envía una respuesta con un mensaje de éxito y la ruta de la imagen subida
-    res.send({
-        message: 'Image uploaded successfully',
-        image: `/${req.file.path}`,
+router.post('/', (req, res) => {
+    // Ejecuta la subida de una sola imagen
+    uploadSingleImage(req, res, function (err) {
+        if (err) {
+            // Si hay un error, envía un mensaje de error con el estado 400
+            res.status(400).send({ message: err.message });
+        }
+
+        // Si la subida es exitosa, envía un mensaje de éxito con la URL de la imagen
+        res.status(200).send({
+            message: 'Image uploaded successfully',
+            image: `/${req.file.path}`,
+        });
     });
 });
 

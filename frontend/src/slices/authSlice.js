@@ -32,9 +32,8 @@ const authSlice = createSlice({
             // Establece la información del usuario en null
             state.userInfo = null;
 
-            // Eliminando la información del usuario & el tiempo de expiración del almacenamiento local
-            localStorage.removeItem('userInfo');
-            localStorage.removeItem('expirationTime');
+            // Eliminar todo lo almacenado en el localStorage
+            localStorage.clear(); // Limpia 'userInfo', 'expirationTime', 'shippingAddress', etc
         },
     },
 });

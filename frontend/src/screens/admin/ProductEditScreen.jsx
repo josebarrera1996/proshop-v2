@@ -123,7 +123,7 @@ const ProductEditScreen = () => {
                     <Loader />
                 ) : error ? (
                     // Mensaje de error si hay un problema al obtener los detalles del producto
-                    <Message variant='danger'>{error}</Message>
+                    <Message variant='danger'>{error.data.message}</Message>
                 ) : (
                     // Formulario de edición de productos
                     <Form onSubmit={submitHandler}>

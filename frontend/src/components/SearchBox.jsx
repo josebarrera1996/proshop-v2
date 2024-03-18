@@ -9,7 +9,7 @@ const SearchBox = () => {
     // Obtiene el parámetro de URL 'keyword'
     const { keyword: urlKeyword } = useParams();
     // Estado local para almacenar la palabra clave de búsqueda
-    const [keyword, setKeyword] = useState(urlKeyword);
+    const [keyword, setKeyword] = useState(urlKeyword || '');
 
     // Función para manejar el envío del formulario de búsqueda
     const submitHandler = (e) => {
