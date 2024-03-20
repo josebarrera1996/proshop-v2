@@ -1,37 +1,48 @@
 // Importamos asyncHandler, un middleware personalizado para manejar excepciones en controladores asíncronos
 import asyncHandler from '../middlewares/asyncHandler.js';
 import Order from '../models/orderModel.js';
+import Product from '../models/productModel.js';
+import { calcPrices } from '../utils/calcPrices.js';
+import { verifyPayPalPayment, checkIfNewTransaction } from '../utils/paypal.js';
 
 // @desc    Crear nuevo pedido
 // @route   POST /api/orders
 // @access  Privado
 // Envuelve el controlador asíncrono con asyncHandler para un manejo de errores adecuado
 const addOrderItems = asyncHandler(async (req, res) => {
-    // Extraer los siguientes campos del cuerpo de la solicitud
-    const {
-        orderItems,
-        shippingAddress,
-        paymentMethod,
-        itemsPrice,
-        taxPrice,
-        shippingPrice,
-        totalPrice,
-    } = req.body;
+    // Extraer los datos del cuerpo de la solicitud
+    const { orderItems, shippingAddress, paymentMethod } = req.body;
 
-    // Verifica si hay elementos en el pedido y si no, devuelve un error
+    // Verificar si hay elementos de pedido y si están vacíos
     if (orderItems && orderItems.length === 0) {
         res.status(400);
         throw new Error('No order items');
     } else {
-        // Crea una nueva instancia de Order con la información proporcionada
-        const order = new Order({
-            // Mapea y transforma los elementos del pedido para asociarlos con el producto correspondiente
-            orderItems: orderItems.map((x) => ({
-                ...x,
-                product: x._id,
+        // Obtener los artículos pedidos de nuestra base de datos
+        const itemsFromDB = await Product.find({
+            _id: { $in: orderItems.map((x) => x._id) },
+        });
+
+        // Mapear sobre los elementos de pedido y usar el precio de nuestros artículos de la base de datos
+        const dbOrderItems = orderItems.map((itemFromClient) => {
+            const matchingItemFromDB = itemsFromDB.find(
+                (itemFromDB) => itemFromDB._id.toString() === itemFromClient._id
+            );
+            return {
+                ...itemFromClient,
+                product: itemFromClient._id,
+                price: matchingItemFromDB.price,
                 _id: undefined,
-            })),
-            // Asocia el usuario actual al pedido
+            };
+        });
+
+        // Calcular los precios
+        const { itemsPrice, taxPrice, shippingPrice, totalPrice } =
+            calcPrices(dbOrderItems);
+
+        // Crear una nueva orden con los detalles del pedido
+        const order = new Order({
+            orderItems: dbOrderItems,
             user: req.user._id,
             shippingAddress,
             paymentMethod,
@@ -41,10 +52,10 @@ const addOrderItems = asyncHandler(async (req, res) => {
             totalPrice,
         });
 
-        // Guarda el nuevo pedido en la base de datos
+        // Guardar la orden en la base de datos
         const createdOrder = await order.save();
 
-        // Responde con el nuevo pedido creado
+        // Responder con la orden creada
         res.status(201).json(createdOrder);
     }
 });
@@ -72,11 +83,23 @@ const getOrderById = asyncHandler(async (req, res) => {
 // @route   PUT /api/orders/:id/pay
 // @access  Privado
 const updateOrderToPaid = asyncHandler(async (req, res) => {
-    // Obtener el pedido (por el ID)
+    // Verificar el pago de PayPal
+    const { verified, value } = await verifyPayPalPayment(req.body.id);
+    if (!verified) throw new Error('Payment not verified');
+
+    // Verificar si esta transacción se ha utilizado antes
+    const isNewTransaction = await checkIfNewTransaction(Order, req.body.id);
+    if (!isNewTransaction) throw new Error('Transaction has been used before');
+
+    // Encontrar la orden por el ID proporcionado en los parámetros de la solicitud
     const order = await Order.findById(req.params.id);
 
-    // Si el pedido existe, actualizarlo a pagado
     if (order) {
+        // Verificar que se haya pagado el monto correcto
+        const paidCorrectAmount = order.totalPrice.toString() === value;
+        if (!paidCorrectAmount) throw new Error('Incorrect amount paid');
+
+        // Actualizar el estado de la orden a pagada y registrar los detalles del pago
         order.isPaid = true;
         order.paidAt = Date.now();
         order.paymentResult = {
@@ -86,12 +109,13 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
             email_address: req.body.payer.email_address,
         };
 
-        // Guardar la actualización realizada
+        // Guardar los cambios en la orden
         const updatedOrder = await order.save();
 
-        // Mostrar el objeto del pedido con la actualización
+        // Responder con la orden actualizada
         res.json(updatedOrder);
     } else {
+        // Responder con un error si no se encuentra la orden
         res.status(404);
         throw new Error('Order not found');
     }

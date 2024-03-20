@@ -73,7 +73,7 @@ const OrderScreen = () => {
         return actions.order.capture().then(async function (details) {
             try {
                 // Llama a la mutación para pagar el pedido con los detalles capturados
-                await payOrder({ orderId, details });
+                await payOrder({ orderId, details }).unwrap();
                 // Vuelve a cargar los detalles del pedido para reflejar los cambios
                 refetch();
                 // Muestra un mensaje de éxito al usuario
