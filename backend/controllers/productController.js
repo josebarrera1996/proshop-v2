@@ -8,7 +8,7 @@ import Product from '../models/productModel.js';
 // Envuelve el controlador asíncrono con asyncHandler para un manejo de errores adecuado
 const getProducts = asyncHandler(async (req, res) => {
     // Tamaño de la página y página actual obtenidos de la consulta o establecidos por defecto
-    const pageSize = 4; // con el valor '1' apreciarás la búsqueda con paginación (por ej, con 'phone' -> search/phone/page/1)
+    const pageSize = process.env.PAGINATION_LIMIT; // con el valor '1' apreciarás la búsqueda con paginación (por ej, con 'phone' -> search/phone/page/1)
     const page = Number(req.query.pageNumber) || 1;
 
     // Condicional para construir la búsqueda por palabra clave
